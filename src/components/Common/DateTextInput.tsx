@@ -1,7 +1,9 @@
 import dayjs from "dayjs";
-import { Fragment, KeyboardEvent, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
+
+import useKeyboardShortcuts from "@/hooks/KeyboardShortcuts";
 
 import { classNames } from "@/Utils/utils";
 
@@ -72,34 +74,20 @@ export default function DateTextInput(props: {
 
   const goToInput = (i: number) => {
     if (i < 0 || i > 4) return;
-    (
-      document.querySelectorAll(
-        `[data-time-input]`,
-      ) as NodeListOf<HTMLInputElement>
-    ).forEach((i) => i.blur());
+    setCurrentIndex(i);
     (
       document.querySelector(`[data-time-input="${i}"]`) as HTMLInputElement
     )?.focus();
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, i: number) => {
-    const keyboardKey: number = event.keyCode || event.charCode;
-    const target = event.target as HTMLInputElement;
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-    // check for backspace
-    if ([8].includes(keyboardKey) && target.value === "") goToInput(i - 1);
-
-    // check for delete
-    if ([46].includes(keyboardKey) && target.value === "") goToInput(i + 1);
-
-    // check for left arrow key
-    if ([37].includes(keyboardKey) && (target.selectionStart || 0) < 1)
-      goToInput(i - 1);
-
-    // check for right arrow key
-    if ([39].includes(keyboardKey) && (target.selectionStart || 0) > 1)
-      goToInput(i + 1);
-  };
+  useKeyboardShortcuts(currentIndex, (event, newIndex) => {
+    setCurrentIndex(newIndex);
+    if (event.key === "Enter") {
+      console.log("Enter key pressed");
+    }
+  });
 
   useEffect(() => {
     const formatUnfocused = (value: number, id: number, digits: number = 2) => {
@@ -151,7 +139,7 @@ export default function DateTextInput(props: {
                   "DDMMYYHHMM".slice(i * 2, i * 2 + 2) +
                   (key === "year" ? "YY" : "")
                 }
-                onKeyDown={(e) => handleKeyDown(e, i)}
+                onKeyDown={(e) => e.preventDefault()}
                 data-time-input={i}
                 onChange={(e) => {
                   const value = e.target.value;

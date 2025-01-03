@@ -28,6 +28,8 @@ import {
 import { FieldError } from "@/components/Form/FieldValidators";
 import PhoneNumberFormField from "@/components/Form/FormFields/PhoneNumberFormField";
 
+import useKeyboardShortcuts from "@/hooks/KeyboardShortcuts";
+
 interface SearchOption {
   key: string;
   label: string;
@@ -101,49 +103,44 @@ const SearchByMultipleFields: React.FC<SearchByMultipleFieldsProps> = ({
     [onSearch],
   );
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.key === "/" &&
-        !(document.activeElement instanceof HTMLInputElement)
-      ) {
-        e.preventDefault();
-        setOpen(true);
+  useKeyboardShortcuts(focusedIndex, (event) => {
+    if (
+      event.key === "/" &&
+      !(document.activeElement instanceof HTMLInputElement)
+    ) {
+      event.preventDefault();
+      setOpen(true);
+    }
+    if (open) {
+      if (event.key === "ArrowDown") {
+        setFocusedIndex((prevIndex) =>
+          prevIndex === options.length - 1 ? 0 : prevIndex + 1,
+        );
+      } else if (event.key === "ArrowUp") {
+        setFocusedIndex((prevIndex) =>
+          prevIndex === 0 ? options.length - 1 : prevIndex - 1,
+        );
+      } else if (event.key === "Enter") {
+        handleOptionChange(focusedIndex);
       }
-      if (open) {
-        if (e.key === "ArrowDown") {
-          setFocusedIndex((prevIndex) =>
-            prevIndex === options.length - 1 ? 0 : prevIndex + 1,
-          );
-        } else if (e.key === "ArrowUp") {
-          setFocusedIndex((prevIndex) =>
-            prevIndex === 0 ? options.length - 1 : prevIndex - 1,
-          );
-        } else if (e.key === "Enter") {
-          handleOptionChange(focusedIndex);
-        }
 
-        if (e.key === "Escape") {
-          inputRef.current?.focus();
-          setOpen(false);
-        }
-
-        options.forEach((option, i) => {
-          if (
-            e.key.toLocaleLowerCase() ===
-              option.shortcutKey.toLocaleLowerCase() &&
-            open
-          ) {
-            e.preventDefault();
-            handleOptionChange(i);
-          }
-        });
+      if (event.key === "Escape") {
+        inputRef.current?.focus();
+        setOpen(false);
       }
-    };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [focusedIndex, open, handleOptionChange, options]);
+      options.forEach((option, i) => {
+        if (
+          event.key.toLocaleLowerCase() ===
+            option.shortcutKey.toLocaleLowerCase() &&
+          open
+        ) {
+          event.preventDefault();
+          handleOptionChange(i);
+        }
+      });
+    }
+  });
 
   useEffect(() => {
     if (inputRef.current) {

@@ -16,6 +16,8 @@ import CircularProgress from "@/components/Common/CircularProgress";
 import DialogModal from "@/components/Common/Dialog";
 import { StateInterface } from "@/components/Files/FileUpload";
 
+import useKeyboardShortcuts from "@/hooks/KeyboardShortcuts";
+
 import { FileUploadModel } from "../Patient/models";
 
 const PDFViewer = lazy(() => import("@/components/Common/PDFViewer"));
@@ -142,20 +144,22 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
       : `rotate-${normalizedRotation}`;
   }
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!show) return;
-      if (e.key === "ArrowLeft" && index > 0) {
-        handleNext(index - 1);
-      }
-      if (e.key === "ArrowRight" && index < (uploadedFiles?.length || 0) - 1) {
-        handleNext(index + 1);
-      }
-    };
+  useKeyboardShortcuts(index, (event, newIndex) => {
+    if (!show || !uploadedFiles?.length) return;
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [show, index, uploadedFiles]);
+    if (event.key === "ArrowLeft" && newIndex > 0) {
+      handleNext(newIndex - 1);
+    }
+    if (event.key === "ArrowRight" && newIndex < uploadedFiles.length) {
+      handleNext(newIndex + 1);
+    }
+  });
+
+  useEffect(() => {
+    if (uploadedFiles && show) {
+      setIndex(currentIndex);
+    }
+  }, [uploadedFiles, show, currentIndex]);
 
   return (
     <DialogModal

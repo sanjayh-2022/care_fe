@@ -15,6 +15,7 @@ import {
 import Spinner from "@/components/Common/Spinner";
 import SelectMenuV2 from "@/components/Form/SelectMenuV2";
 
+import useKeyboardShortcut from "@/hooks/KeyboardShortcuts";
 import useAuthUser from "@/hooks/useAuthUser";
 
 import { NOTIFICATION_EVENTS } from "@/common/constants";
@@ -193,15 +194,11 @@ export default function NotificationsList({
   const observerRef = useRef(null);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
+  useKeyboardShortcut(27, () => {
+    if (open) {
+      setOpen(false);
     }
-    if (open) document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open]);
+  });
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
