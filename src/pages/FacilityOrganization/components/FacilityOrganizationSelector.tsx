@@ -6,7 +6,7 @@ import CareIcon from "@/CAREUI/icons/CareIcon";
 import Autocomplete from "@/components/ui/autocomplete";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import InputWithError from "@/components/ui/input-with-error";
+import { Label } from "@/components/ui/label";
 
 import routes from "@/Utils/request/api";
 import query from "@/Utils/request/query";
@@ -31,7 +31,7 @@ interface AutoCompleteOption {
 export default function FacilityOrganizationSelector(
   props: FacilityOrganizationSelectorProps,
 ) {
-  const { onChange, required, facilityId } = props;
+  const { onChange, required: _required, facilityId } = props;
   const [selectedLevels, setSelectedLevels] = useState<FacilityOrganization[]>(
     [],
   );
@@ -105,10 +105,19 @@ export default function FacilityOrganizationSelector(
     }
   };
 
+  function t(key: string): string {
+    const translations: { [key: string]: string } = {
+      Organization: "Organization",
+    };
+    return translations[key] || key;
+  }
+
   return (
-    <InputWithError label="Organization" required={required}>
+    <div className="mb-4">
+      <Label htmlFor="organization" className="">
+        {t("Organization")}
+      </Label>
       <div className="space-y-4">
-        {/* Selected Organization Display */}
         {selectedOrganization && (
           <div className="rounded-md border p-3 bg-gray-50">
             <div className="flex items-center justify-between">
@@ -185,6 +194,8 @@ export default function FacilityOrganizationSelector(
           </div>
         )}
       </div>
-    </InputWithError>
+
+      {/* Handle errors if needed */}
+    </div>
   );
 }

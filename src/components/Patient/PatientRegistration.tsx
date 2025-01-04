@@ -8,7 +8,6 @@ import SectionNavigator from "@/CAREUI/misc/SectionNavigator";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { InputErrors } from "@/components/ui/errors";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -49,7 +48,6 @@ import OrganizationSelector from "@/pages/Organization/components/OrganizationSe
 import { PatientModel, validatePatient } from "@/types/emr/patient";
 
 import Autocomplete from "../ui/autocomplete";
-import InputWithError from "../ui/input-with-error";
 
 interface PatientRegistrationPageProps {
   facilityId: string;
@@ -316,19 +314,38 @@ export default function PatientRegistration(
             </h2>
             <div className="text-sm">{t("general_info_detail")}</div>
             <br />
-            <InputWithError label={t("name")} required errors={errors["name"]}>
+            <div className="mb-4">
+              <Label
+                htmlFor="name"
+                className={errors.name ? "text-red-500" : ""}
+              >
+                {t("name")}
+              </Label>
               <Input
+                id="name"
                 {...fieldProps("name")}
                 placeholder={t("type_patient_name")}
+                className={`mt-1 block w-full border ${
+                  errors.name ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
               />
-            </InputWithError>
+              {errors.name &&
+                errors.name.map((error, index) => (
+                  <span key={index} className="text-sm text-red-500 mt-1">
+                    {error}
+                  </span>
+                ))}
+            </div>
             <br />
-            <InputWithError
-              label={t("phone_number")}
-              required
-              errors={errors["phone_number"]}
-            >
+            <div className="mb-4">
+              <Label
+                htmlFor="phone_number"
+                className={errors.phone_number ? "text-red-500" : ""}
+              >
+                {t("phone_number")}
+              </Label>
               <Input
+                id="phone_number"
                 {...fieldProps("phone_number")}
                 onChange={(e) => {
                   if (e.target.value.length > 13) return;
@@ -340,10 +357,20 @@ export default function PatientRegistration(
                       : f.emergency_phone_number,
                   }));
                 }}
+                className={`mt-1 block w-full border ${
+                  errors.phone_number ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
               />
-            </InputWithError>
+              {errors.phone_number &&
+                errors.phone_number.map((error, index) => (
+                  <span key={index} className="text-sm text-red-500 mt-1">
+                    {error}
+                  </span>
+                ))}
+            </div>
+
             <div className="mt-1 flex gap-1 items-center">
-              <InputWithError>
+              <div className="mb-4 flex items-center gap-2">
                 <Checkbox
                   checked={samePhoneNumber}
                   onCheckedChange={() => {
@@ -357,19 +384,23 @@ export default function PatientRegistration(
                     }
                   }}
                   id="same-phone-number"
+                  className=""
                 />
-                <Label htmlFor="same-phone-number">
+                <Label htmlFor="same-phone-number" className="">
                   {t("use_phone_number_for_emergency")}
                 </Label>
-              </InputWithError>
+              </div>
             </div>
             <br />
-            <InputWithError
-              label={t("emergency_phone_number")}
-              required
-              errors={errors["emergency_phone_number"]}
-            >
+            <div className="mb-4">
+              <Label
+                htmlFor="emergency_phone_number"
+                className={errors.emergency_phone_number ? "text-red-500" : ""}
+              >
+                {t("emergency_phone_number")}
+              </Label>
               <Input
+                id="emergency_phone_number"
                 {...fieldProps("emergency_phone_number")}
                 onChange={(e) => {
                   if (e.target.value.length > 13) return;
@@ -379,8 +410,23 @@ export default function PatientRegistration(
                   }));
                 }}
                 disabled={samePhoneNumber}
+                className={`mt-1 block w-full border ${
+                  errors.emergency_phone_number
+                    ? "border-red-500"
+                    : "border-gray-300"
+                } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
               />
-            </InputWithError>
+              {errors.emergency_phone_number && (
+                <span className="text-sm text-red-500 mt-1">
+                  {errors.emergency_phone_number.map((error, index) => (
+                    <span key={index} className="text-sm text-red-500 mt-1">
+                      {error}
+                    </span>
+                  ))}
+                </span>
+              )}
+            </div>
+
             {/* <br />
             <Input
               // This field does not exist in the backend, but is present in the design
@@ -389,33 +435,56 @@ export default function PatientRegistration(
               placeholder={t("emergency_contact_person_name")}
             /> */}
             <br />
-            <InputWithError label={t("sex")} required errors={errors["gender"]}>
+            <div className="mb-4">
+              <Label
+                htmlFor="gender"
+                className={errors.gender ? "text-red-500" : ""}
+              >
+                {t("sex")}
+              </Label>
               <RadioGroup
                 value={form.gender?.toString()}
                 onValueChange={(value) =>
                   setForm((f) => ({ ...f, gender: value }))
                 }
-                className="flex items-center gap-4"
+                className={`mt-1 flex items-center gap-4 ${
+                  errors.gender ? "border-red-500" : ""
+                }`}
               >
                 {GENDER_TYPES.map((g) => (
                   <Fragment key={g.id}>
                     <RadioGroupItem
                       value={g.id.toString()}
-                      id={"gender_" + g.id}
+                      id={`gender_${g.id}`}
                     />
-                    <Label htmlFor={"gender_" + g.id}>
+                    <Label
+                      htmlFor={`gender_${g.id}`}
+                      className={errors.gender ? "text-red-500" : ""}
+                    >
                       {t(`GENDER__${g.id}`)}
                     </Label>
                   </Fragment>
                 ))}
               </RadioGroup>
-            </InputWithError>
+              {errors.gender && (
+                <span className="text-sm text-red-500 mt-1">
+                  {errors.gender.map((error, index) => (
+                    <span key={index} className="text-sm text-red-500 mt-1">
+                      {error}
+                    </span>
+                  ))}
+                </span>
+              )}
+            </div>
+
             <br />
-            <InputWithError
-              label={t("blood_group")}
-              required
-              errors={errors["blood_group"]}
-            >
+            <div className="mb-4">
+              <Label
+                htmlFor="blood_group"
+                className={errors.blood_group ? "text-red-500" : ""}
+              >
+                {t("blood_group")}
+              </Label>
               <Select {...selectProps("blood_group")}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -428,7 +497,17 @@ export default function PatientRegistration(
                   ))}
                 </SelectContent>
               </Select>
-            </InputWithError>
+              {errors.blood_group && (
+                <span className="text-sm text-red-500 mt-1">
+                  {errors.blood_group.map((error, index) => (
+                    <span key={index} className="text-sm text-red-500 mt-1">
+                      {error}
+                    </span>
+                  ))}
+                </span>
+              )}
+            </div>
+
             <br />
             <Tabs
               value={ageDob}
@@ -447,44 +526,101 @@ export default function PatientRegistration(
               <TabsContent value="dob">
                 <div className="flex items-center gap-2">
                   <div className="flex-1">
-                    <InputWithError label={t("day")} required>
+                    <div className="mb-4">
+                      <Label
+                        htmlFor="day"
+                        className={errors.date_of_birth ? "text-red-500" : ""}
+                      >
+                        {t("day")}
+                      </Label>
                       <Input
+                        id="day"
                         placeholder="DD"
                         type="number"
                         value={form.date_of_birth?.split("-")[2] || ""}
-                        maxLength={2}
                         max={31}
                         min={1}
                         onChange={(e) =>
                           setForm((f) => ({
                             ...f,
-                            date_of_birth: `${form.date_of_birth?.split("-")[0] || ""}-${form.date_of_birth?.split("-")[1] || ""}-${e.target.value}`,
+                            date_of_birth: `${
+                              form.date_of_birth?.split("-")[0] || ""
+                            }-${form.date_of_birth?.split("-")[1] || ""}-${e.target.value}`,
                           }))
                         }
+                        className={`mt-1 block w-full border ${
+                          errors.date_of_birth
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
                       />
-                    </InputWithError>
+                      {errors.date_of_birth && (
+                        <span className="text-sm text-red-500 mt-1">
+                          {errors.date_of_birth.map((error, index) => (
+                            <span
+                              key={index}
+                              className="text-sm text-red-500 mt-1"
+                            >
+                              {error}
+                            </span>
+                          ))}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex-1">
-                    <InputWithError label={t("month")} required>
+                    <div className="mb-4">
+                      <Label
+                        htmlFor="month"
+                        className={errors.date_of_birth ? "text-red-500" : ""}
+                      >
+                        {t("month")}
+                      </Label>
                       <Input
+                        id="month"
                         placeholder="MM"
                         type="number"
                         value={form.date_of_birth?.split("-")[1] || ""}
-                        maxLength={2}
                         max={12}
                         min={1}
                         onChange={(e) =>
                           setForm((f) => ({
                             ...f,
-                            date_of_birth: `${form.date_of_birth?.split("-")[0] || ""}-${e.target.value}-${form.date_of_birth?.split("-")[2] || ""}`,
+                            date_of_birth: `${
+                              form.date_of_birth?.split("-")[0] || ""
+                            }-${e.target.value}-${form.date_of_birth?.split("-")[2] || ""}`,
                           }))
                         }
+                        className={`mt-1 block w-full border ${
+                          errors.date_of_birth
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
                       />
-                    </InputWithError>
+                      {errors.date_of_birth && (
+                        <span className="text-sm text-red-500 mt-1">
+                          {errors.date_of_birth.map((error, index) => (
+                            <span
+                              key={index}
+                              className="text-sm text-red-500 mt-1"
+                            >
+                              {error}
+                            </span>
+                          ))}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex-1">
-                    <InputWithError label={t("year")} required>
+                    <div className="mb-4">
+                      <Label
+                        htmlFor="year"
+                        className={errors.date_of_birth ? "text-red-500" : ""}
+                      >
+                        Year
+                      </Label>
                       <Input
+                        id="year"
                         type="number"
                         placeholder="YYYY"
                         value={form.date_of_birth?.split("-")[0] || ""}
@@ -497,12 +633,35 @@ export default function PatientRegistration(
                             date_of_birth: `${e.target.value}-${form.date_of_birth?.split("-")[1] || ""}-${form.date_of_birth?.split("-")[2] || ""}`,
                           }))
                         }
+                        className={`mt-1 block w-full border ${
+                          errors.date_of_birth
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
                       />
-                    </InputWithError>
+                      {errors.date_of_birth && (
+                        <span className="text-sm text-red-500 mt-1">
+                          {errors.date_of_birth.map((error, index) => (
+                            <span
+                              key={index}
+                              className="text-sm text-red-500 mt-1"
+                            >
+                              {error}
+                            </span>
+                          ))}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 {errors["date_of_birth"] && (
-                  <InputErrors errors={errors["date_of_birth"]} />
+                  <span className="text-sm text-red-500 mt-1">
+                    {errors["date_of_birth"].map((error, index) => (
+                      <span key={index} className="text-sm text-red-500 mt-1">
+                        {error}
+                      </span>
+                    ))}
+                  </span>
                 )}
               </TabsContent>
               <TabsContent value="age">
@@ -512,13 +671,16 @@ export default function PatientRegistration(
                   <b>{t("age_input_warning_bold")}</b>
                 </div>
                 <div className="relative">
-                  <InputWithError
-                    label={t("age")}
-                    required
-                    errors={errors["year_of_birth"]}
-                  >
+                  <div className="mb-4">
+                    <Label
+                      htmlFor="age"
+                      className={errors["year_of_birth"] ? "text-red-500" : ""}
+                    >
+                      {t("age")}
+                    </Label>
                     <Input
-                      value={form.age ? form.age : undefined}
+                      id="age"
+                      value={form.age || undefined}
                       onChange={(e) =>
                         setForm((f) => ({
                           ...f,
@@ -529,8 +691,27 @@ export default function PatientRegistration(
                         }))
                       }
                       type="number"
+                      required
+                      className={`mt-1 block w-full border ${
+                        errors["year_of_birth"]
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
                     />
-                  </InputWithError>
+                    {errors["year_of_birth"] && (
+                      <span className="text-sm text-red-500 mt-1">
+                        {errors["year_of_birth"].map((error, index) => (
+                          <span
+                            key={index}
+                            className="text-sm text-red-500 mt-1"
+                          >
+                            {error}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                  </div>
+
                   {form.year_of_birth && (
                     <div className="text-xs absolute right-6 top-[22px] bottom-0 flex items-center justify-center p-2 pointer-events-none">
                       {t("year_of_birth")} : {form.year_of_birth}
@@ -540,13 +721,17 @@ export default function PatientRegistration(
               </TabsContent>
             </Tabs>
             <br />
-            <InputWithError
-              label={t("current_address")}
-              required
-              errors={errors["address"]}
-            >
+            <div className="mb-4">
+              <Label
+                htmlFor="address"
+                className={errors["address"] ? "text-red-500" : ""}
+              >
+                {t("current_address")}
+              </Label>
               <Textarea
+                id="address"
                 {...fieldProps("address")}
+                value={form.address || ""}
                 onChange={(e) =>
                   setForm((f) => ({
                     ...f,
@@ -556,11 +741,32 @@ export default function PatientRegistration(
                       : f.permanent_address,
                   }))
                 }
+                required
+                className={`mt-1 block w-full border ${
+                  errors["address"] ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
               />
-            </InputWithError>
+              {errors["address"] && (
+                <span className="text-sm text-red-500 mt-1">
+                  {errors["address"].map((error, index) => (
+                    <span key={index} className="text-sm text-red-500 mt-1">
+                      {error}
+                    </span>
+                  )) || "This field is required"}
+                </span>
+              )}
+            </div>
+
             <div className="mt-1 flex gap-1 items-center">
-              <InputWithError>
+              <div className="mb-4">
+                <Label
+                  htmlFor="same-address"
+                  className={errors["sameAddress"] ? "text-red-500" : ""}
+                >
+                  {t("use_address_as_permanent")}
+                </Label>
                 <Checkbox
+                  id="same-address"
                   checked={sameAddress}
                   onCheckedChange={() => {
                     setSameAddress(!sameAddress);
@@ -571,37 +777,86 @@ export default function PatientRegistration(
                         : f.permanent_address,
                     }));
                   }}
-                  id="same-address"
+                  className={`mt-1 block ${
+                    errors["sameAddress"] ? "border-red-500" : "border-gray-300"
+                  } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
                 />
-                <Label htmlFor="same-address">
-                  {t("use_address_as_permanent")}
-                </Label>
-              </InputWithError>
+                {errors["sameAddress"] && (
+                  <span className="text-sm text-red-500 mt-1">
+                    {errors["sameAddress"] &&
+                      errors["sameAddress"].map((error, index) => (
+                        <span key={index} className="text-sm text-red-500 mt-1">
+                          {error}
+                        </span>
+                      ))}
+                  </span>
+                )}
+              </div>
             </div>
             <br />
-            <InputWithError label={t("permanent_address")} required>
+            <div className="mb-4">
+              <Label
+                htmlFor="permanent_address"
+                className={errors["permanent_address"] ? "text-red-500" : ""}
+              >
+                {t("permanent_address")}
+              </Label>
               <Textarea
-                {...fieldProps("permanent_address")}
+                id="permanent_address"
                 value={form.permanent_address}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, permanent_address: e.target.value }))
                 }
                 disabled={sameAddress}
+                className={`mt-1 block w-full border ${
+                  errors["permanent_address"]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
               />
-            </InputWithError>
+              {errors["permanent_address"] && (
+                <span className="text-sm text-red-500 mt-1">
+                  {errors["permanent_address"].map((error, index) => (
+                    <span key={index} className="text-sm text-red-500 mt-1">
+                      {error}
+                    </span>
+                  )) || "This field is required"}
+                </span>
+              )}
+            </div>
+
             {/* <br />
             <Input
               // This field does not exist in the backend, but is present in the design
               label={t("landmark")}
             /> */}
             <br />
-            <InputWithError
-              label={t("pincode")}
-              required
-              errors={errors["pincode"]}
-            >
-              <Input {...fieldProps("pincode")} type="number" />
-            </InputWithError>
+            <div className="mb-4">
+              <Label
+                htmlFor="pincode"
+                className={errors["pincode"] ? "text-red-500" : ""}
+              >
+                {t("pincode")}
+              </Label>
+              <Input
+                id="pincode"
+                {...fieldProps("pincode")}
+                type="number"
+                className={`mt-1 block w-full border ${
+                  errors["pincode"] ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200`}
+              />
+              {errors["pincode"] && (
+                <span className="text-sm text-red-500 mt-1">
+                  {errors["pincode"].map((error, index) => (
+                    <span key={index} className="text-sm text-red-500 mt-1">
+                      {error}
+                    </span>
+                  )) || "This field is required"}
+                </span>
+              )}
+            </div>
+
             {/* {showAutoFilledPincode && (
               <div>
                 <CareIcon
@@ -616,11 +871,15 @@ export default function PatientRegistration(
             <br />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <InputWithError
-                  label={t("nationality")}
-                  errors={errors["nationality"]}
-                  required
-                >
+                <div className="mb-4">
+                  <Label
+                    htmlFor="nationality"
+                    className={
+                      errors["nationality"] ? "text-red-500 mb-2" : "mb-2"
+                    }
+                  >
+                    {t("nationality")}
+                  </Label>
                   <Autocomplete
                     options={countryList.map((c) => ({ label: c, value: c }))}
                     value={form.nationality || ""}
@@ -631,7 +890,16 @@ export default function PatientRegistration(
                       }));
                     }}
                   />
-                </InputWithError>
+                  {errors["nationality"] && (
+                    <span className="text-sm text-red-500 mt-1">
+                      {errors["nationality"].map((error, index) => (
+                        <span key={index} className="text-sm text-red-500 mt-1">
+                          {error}
+                        </span>
+                      )) || "This field is required"}
+                    </span>
+                  )}
+                </div>
               </div>
               {form.nationality === "India" && (
                 <>

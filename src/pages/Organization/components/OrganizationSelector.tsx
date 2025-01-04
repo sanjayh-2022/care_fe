@@ -5,7 +5,7 @@ import CareIcon from "@/CAREUI/icons/CareIcon";
 
 import Autocomplete from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
-import InputWithError from "@/components/ui/input-with-error";
+import { Label } from "@/components/ui/label";
 
 import useDebouncedState from "@/hooks/useDebouncedState";
 
@@ -28,7 +28,7 @@ interface AutoCompleteOption {
 }
 
 export default function OrganizationSelector(props: OrganizationSelectorProps) {
-  const { onChange, required } = props;
+  const { onChange, required: _required } = props;
   const [selectedLevels, setSelectedLevels] = useState<Organization[]>([]);
   const [searchQuery, setSearchQuery] = useDebouncedState("", 500);
 
@@ -113,13 +113,10 @@ export default function OrganizationSelector(props: OrganizationSelectorProps) {
       {/* Selected Levels */}
       {selectedLevels.map((level, index) => (
         <div>
-          <InputWithError
-            key={level.id}
-            label={
-              index === 0 ? ORGANIZATION_LEVELS.govt[0] : getLevelLabel(level)
-            }
-            required={required}
-          >
+          <div className="mb-4" key={level.id}>
+            <Label htmlFor={`organization-level-${level.id}`} className="">
+              {index === 0 ? ORGANIZATION_LEVELS.govt[0] : getLevelLabel(level)}
+            </Label>
             <div className="flex">
               <div className="flex items-center h-9 w-full rounded-md border border-gray-200 bg-white px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-gray-950 placeholder:text-gray-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-gray-800 dark:file:text-gray-50 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-300">
                 <div className="w-full text-nowrap overflow-x-auto">
@@ -135,7 +132,13 @@ export default function OrganizationSelector(props: OrganizationSelectorProps) {
                 <CareIcon icon="l-trash" className="h-4 w-4" />
               </Button>
             </div>
-          </InputWithError>
+
+            {false && (
+              <span className="text-sm text-red-500 mt-1">
+                {"This field is required"}
+              </span>
+            )}
+          </div>
         </div>
       ))}
 
@@ -143,10 +146,14 @@ export default function OrganizationSelector(props: OrganizationSelectorProps) {
       {(!selectedLevels.length ||
         selectedLevels[selectedLevels.length - 1]?.has_children) && (
         <div>
-          <InputWithError
-            label={ORGANIZATION_LEVELS.govt[selectedLevels.length]}
-            required={selectedLevels.length === 0 && required}
-          >
+          <div className="mb-4">
+            <Label
+              htmlFor={`organization-level-${selectedLevels.length}`}
+              className=""
+            >
+              {ORGANIZATION_LEVELS.govt[selectedLevels.length]}
+            </Label>
+
             <Autocomplete
               value=""
               options={getOrganizationOptions(
@@ -159,7 +166,13 @@ export default function OrganizationSelector(props: OrganizationSelectorProps) {
               }
               onSearch={setSearchQuery}
             />
-          </InputWithError>
+
+            {false && (
+              <span className="text-sm text-red-500 mt-1">
+                {"This field is required"}
+              </span>
+            )}
+          </div>
         </div>
       )}
     </>
