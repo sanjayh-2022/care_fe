@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { navigate } from "raviger";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
 
@@ -15,15 +16,13 @@ import {
   SlotAvailability,
 } from "@/components/Schedule/types";
 
-import { CarePatientTokenKey } from "@/common/constants";
+import { usePatientContext } from "@/hooks/usePatientUser";
 
-import * as Notification from "@/Utils/Notifications";
 import routes from "@/Utils/request/api";
 import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
 import { PaginatedResponse } from "@/Utils/request/types";
 import { AppointmentPatient } from "@/pages/Patient/Utils";
-import { TokenData } from "@/types/auth/otpToken";
 import PublicAppointmentApi from "@/types/scheduling/PublicAppointmentApi";
 
 export default function PatientSelect({
@@ -38,21 +37,21 @@ export default function PatientSelect({
     localStorage.getItem("selectedSlot") ?? "",
   ) as SlotAvailability;
   const reason = localStorage.getItem("reason");
-  const tokenData: TokenData = JSON.parse(
-    localStorage.getItem(CarePatientTokenKey) || "{}",
-  );
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
+
+  const patientUserContext = usePatientContext();
+  const tokenData = patientUserContext?.tokenData;
 
   const queryClient = useQueryClient();
 
   if (!staffId) {
-    Notification.Error({ msg: "Staff Not Found" });
+    toast.error(t("staff_not_found"));
     navigate(`/facility/${facilityId}/`);
   } else if (!tokenData) {
-    Notification.Error({ msg: "Phone Number Not Found" });
+    toast.error(t("phone_number_not_found"));
     navigate(`/facility/${facilityId}/appointments/${staffId}/otp/send`);
   } else if (!selectedSlot) {
-    Notification.Error({ msg: "Selected Slot Not Found" });
+    toast.error(t("selected_slot_not_found"));
     navigate(
       `/facility/${facilityId}/appointments/${staffId}/book-appointment`,
     );
@@ -81,7 +80,7 @@ export default function PatientSelect({
         },
       })(body),
     onSuccess: (data: Appointment) => {
-      Notification.Success({ msg: t("appointment_created_success") });
+      toast.success(t("appointment_created_success"));
       queryClient.invalidateQueries({
         queryKey: [
           ["patients", tokenData.phoneNumber],
@@ -93,9 +92,7 @@ export default function PatientSelect({
       });
     },
     onError: (error) => {
-      Notification.Error({
-        msg: error?.message || t("failed_to_create_appointment"),
-      });
+      toast.error(error?.message || t("failed_to_create_appointment"));
     },
   });
 
