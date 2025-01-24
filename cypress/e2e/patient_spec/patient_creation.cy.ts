@@ -2,12 +2,11 @@ import { patientCreation } from "pageObject/Patients/PatientCreation";
 import { patientDashboard } from "pageObject/Patients/PatientDashboard";
 import { patientVerify } from "pageObject/Patients/PatientVerify";
 import { FacilityCreation } from "pageObject/facility/FacilityCreation";
-
 import {
   generateAddress,
   generateName,
   generatePhoneNumber,
-} from "../../utils/commonUtils";
+} from "utils/commonUtils";
 
 const facilityCreation = new FacilityCreation();
 const ENCOUNTER_TYPE = "Observation";
@@ -30,8 +29,6 @@ describe("Patient Management", () => {
     dateOfBirth: "01-01-1990",
     address: generateAddress(),
     pincode: "682001",
-    state: "Kerala",
-    district: "Ernakulam",
     localBody: "Aluva",
     ward: "4",
   };
