@@ -39,12 +39,12 @@ export default function QuickAccess({
   return (
     <div className="flex flex-col gap-6">
       {/* Questionnaire Section */}
-      <section>
-        <h3 className="text-lg font-medium mb-3">{t("questionnaire")}</h3>
-        <div className="space-y-3">
+      <section className="space-y-2 p-2">
+        <h3 className="text-lg font-semibold mb-3">{t("questionnaire")}</h3>
+        <div className="space-y-3 p-2 font-medium">
           {questionnaireList.map((item) => (
             <Link
-              className="flex items-center gap-1 text-sm hover:text-gray-500 text-gray-900"
+              className="flex items-center gap-2 text-sm hover:text-gray-500 text-gray-900"
               key={item.id}
               // className="w-full justify-start gap-2 h-auto py-2"
               href={`/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/questionnaire/${item.slug}`}
