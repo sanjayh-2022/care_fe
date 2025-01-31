@@ -40,11 +40,10 @@ export type FileUploadOptions = {
     }
 );
 
-export interface FileInputProps
-  extends Omit<
-    DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-    "id" | "title" | "type" | "accept" | "onChange"
-  > {}
+export type FileInputProps = Omit<
+  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+  "id" | "title" | "type" | "accept" | "onChange"
+> & {};
 
 export type FileUploadReturn = {
   progress: null | number;
@@ -62,6 +61,7 @@ export type FileUploadReturn = {
   removeFile: (index: number) => void;
   clearFiles: () => void;
   uploading: boolean;
+  previewing?: boolean;
 };
 
 // Array of image extensions
@@ -93,6 +93,7 @@ export default function useFileUpload(
   const [cameraModalOpen, setCameraModalOpen] = useState(false);
   const [audioModalOpen, setAudioModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
 
   const [files, setFiles] = useState<File[]>([]);
   const queryClient = useQueryClient();
@@ -176,7 +177,7 @@ export default function useFileUpload(
         });
         toast.success(t("file_uploaded"));
         setError(null);
-        onUpload && onUpload(data);
+        onUpload?.(data);
       },
     });
 
@@ -277,7 +278,7 @@ export default function useFileUpload(
         if (data) {
           await uploadfile(data, file, associating_id);
         }
-      } catch (error) {
+      } catch {
         errors.push(file);
       }
     }
@@ -286,6 +287,7 @@ export default function useFileUpload(
     setFiles(errors);
     setUploadFileNames(errors?.map((f) => f.name) ?? []);
     setError(t("file_error__network"));
+    setCameraModalOpen(false);
   };
 
   const clearFiles = () => {
@@ -303,6 +305,7 @@ export default function useFileUpload(
           setFiles((prev) => [...prev, file]);
         }}
         onResetCapture={clearFiles}
+        setPreview={setPreviewing}
       />
       <AudioCaptureDialog
         show={audioModalOpen}
@@ -357,5 +360,6 @@ export default function useFileUpload(
     },
     clearFiles,
     uploading,
+    previewing,
   };
 }
