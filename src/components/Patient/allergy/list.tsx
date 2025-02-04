@@ -28,7 +28,7 @@ interface AllergyListProps {
   facilityId?: string;
   patientId: string;
   encounterId?: string;
-  encounterStatus: Encounter["status"];
+  encounterStatus?: Encounter["status"];
 }
 
 export function AllergyList({
