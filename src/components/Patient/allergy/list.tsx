@@ -22,24 +22,32 @@ import { Avatar } from "@/components/Common/Avatar";
 import query from "@/Utils/request/query";
 import { AllergyIntolerance } from "@/types/emr/allergyIntolerance/allergyIntolerance";
 import allergyIntoleranceApi from "@/types/emr/allergyIntolerance/allergyIntoleranceApi";
+import { Encounter, completedEncounterStatus } from "@/types/emr/encounter";
 
 interface AllergyListProps {
   facilityId?: string;
   patientId: string;
   encounterId?: string;
+  encounterStatus: Encounter["status"];
 }
 
 export function AllergyList({
   facilityId,
   patientId,
   encounterId,
+  encounterStatus,
 }: AllergyListProps) {
   const [showEnteredInError, setShowEnteredInError] = useState(false);
 
   const { data: allergies, isLoading } = useQuery({
-    queryKey: ["allergies", patientId, encounterId],
+    queryKey: ["allergies", patientId, encounterId, encounterStatus],
     queryFn: query(allergyIntoleranceApi.getAllergy, {
       pathParams: { patientId },
+      queryParams: {
+        encounter: completedEncounterStatus.includes(encounterStatus as string)
+          ? encounterId
+          : undefined,
+      },
     }),
   });
 
@@ -233,7 +241,7 @@ const AllergyListLayout = ({
     <Card>
       <CardHeader className="px-4 py-0 pt-4 flex justify-between flex-row">
         <CardTitle>{t("allergies")}</CardTitle>
-        {facilityId && encounterId && (
+        {facilityId && (
           <Link
             href={`/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/questionnaire/allergy_intolerance`}
             className="flex items-center gap-1 text-sm hover:text-gray-500"
