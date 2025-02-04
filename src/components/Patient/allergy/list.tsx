@@ -241,7 +241,7 @@ const AllergyListLayout = ({
     <Card>
       <CardHeader className="px-4 py-0 pt-4 flex justify-between flex-row">
         <CardTitle>{t("allergies")}</CardTitle>
-        {facilityId && (
+        {facilityId && encounterId && (
           <Link
             href={`/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/questionnaire/allergy_intolerance`}
             className="flex items-center gap-1 text-sm hover:text-gray-500"
