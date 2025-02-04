@@ -12,7 +12,6 @@ import {
 
 import { Avatar } from "@/components/Common/Avatar";
 
-import { formatName } from "@/Utils/utils";
 import { Symptom } from "@/types/emr/symptom/symptom";
 
 export const getStatusBadgeStyle = (status: string) => {
@@ -32,89 +31,87 @@ export const getStatusBadgeStyle = (status: string) => {
 
 interface SymptomTableProps {
   symptoms: Symptom[];
-  showHeader?: boolean;
 }
 
-export function SymptomTable({
-  symptoms,
-  showHeader = true,
-}: SymptomTableProps) {
+export function SymptomTable({ symptoms }: SymptomTableProps) {
   return (
-    <Table>
-      {showHeader && (
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t("symptom")}</TableHead>
-            <TableHead>{t("status")}</TableHead>
-            <TableHead>{t("severity")}</TableHead>
-            <TableHead>{t("onset")}</TableHead>
-            <TableHead>{t("verification")}</TableHead>
-            <TableHead>{t("notes")}</TableHead>
-            <TableHead>{t("created_by")}</TableHead>
-          </TableRow>
-        </TableHeader>
-      )}
+    <Table className="border-separate border-spacing-y-0.5">
+      <TableHeader>
+        <TableRow className="rounded-md overflow-hidden bg-gray-100">
+          <TableHead className="first:rounded-l-md h-auto  py-1 px-2  text-gray-600">
+            {t("symptom")}
+          </TableHead>
+          <TableHead className="h-auto  py-1 px-2  text-gray-600">
+            {t("severity")}
+          </TableHead>
+          <TableHead className="h-auto  py-1 px-2  text-gray-600">
+            {t("status")}
+          </TableHead>
+          <TableHead className="h-auto  py-1 px-2  text-gray-600">
+            {t("verification")}
+          </TableHead>
+          <TableHead className="last:rounded-r-md h-auto  py-1 px-2  text-gray-600">
+            {t("logged_by")}
+          </TableHead>
+        </TableRow>
+      </TableHeader>
       <TableBody>
-        {symptoms.map((symptom: Symptom, index: number) => {
-          const isEnteredInError =
-            symptom.verification_status === "entered_in_error";
-
-          return (
-            <>
-              <TableRow
-                key={index}
-                className={
-                  isEnteredInError ? "opacity-50 bg-gray-50/50" : undefined
-                }
+        {symptoms.map((symptom) => (
+          <TableRow
+            key={symptom.id}
+            className={`rounded-md overflow-hidden bg-gray-50 ${
+              symptom.verification_status === "entered_in_error"
+                ? "opacity-50"
+                : ""
+            }`}
+          >
+            <TableCell className="font-medium first:rounded-l-md">
+              {symptom.code.display}
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant="outline"
+                className={`whitespace-nowrap ${getStatusBadgeStyle(
+                  symptom.clinical_status,
+                )}`}
               >
-                <TableCell className="font-medium">
-                  {symptom.code.display}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={`whitespace-nowrap ${getStatusBadgeStyle(symptom.clinical_status)}`}
-                  >
-                    {t(symptom.clinical_status)}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={"secondary"} className="whitespace-nowrap">
-                    {t(symptom.severity)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="whitespace-nowrap">
-                  {symptom.onset?.onset_datetime
-                    ? new Date(
-                        symptom.onset.onset_datetime,
-                      ).toLocaleDateString()
-                    : "-"}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={isEnteredInError ? "destructive" : "outline"}
-                    className="whitespace-nowrap capitalize"
-                  >
-                    {t(symptom.verification_status)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="max-w-[200px] truncate">
-                  {symptom.note || "-"}
-                </TableCell>
-                <TableCell className="whitespace-nowrap flex items-center gap-2">
-                  <Avatar
-                    name={formatName(symptom.created_by)}
-                    className="w-4 h-4"
-                    imageUrl={symptom.created_by?.profile_picture_url}
-                  />
-                  <span className="text-sm">
-                    {formatName(symptom.created_by)}
-                  </span>
-                </TableCell>
-              </TableRow>
-            </>
-          );
-        })}
+                {t(symptom.clinical_status)}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant="outline"
+                className={`whitespace-nowrap ${getStatusBadgeStyle(
+                  symptom.clinical_status,
+                )}`}
+              >
+                {t(symptom.clinical_status)}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant={
+                  symptom.verification_status === "entered_in_error"
+                    ? "destructive"
+                    : "outline"
+                }
+                className="whitespace-nowrap capitalize"
+              >
+                {t(symptom.verification_status)}
+              </Badge>
+            </TableCell>
+            <TableCell className="last:rounded-r-md">
+              <div className="flex items-center gap-2">
+                <Avatar
+                  name={symptom.created_by.username}
+                  className="w-4 h-4"
+                  imageUrl={symptom.created_by.profile_picture_url}
+                />
+                <span className="text-sm">{symptom.created_by.username}</span>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   );

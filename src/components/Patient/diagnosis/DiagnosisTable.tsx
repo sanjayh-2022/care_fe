@@ -12,7 +12,6 @@ import {
 
 import { Avatar } from "@/components/Common/Avatar";
 
-import { formatName } from "@/Utils/utils";
 import { Diagnosis } from "@/types/emr/diagnosis/diagnosis";
 
 export const getStatusBadgeStyle = (status: string) => {
@@ -32,83 +31,88 @@ export const getStatusBadgeStyle = (status: string) => {
 
 interface DiagnosisTableProps {
   diagnoses: Diagnosis[];
-  showHeader?: boolean;
 }
 
-export function DiagnosisTable({
-  diagnoses,
-  showHeader = true,
-}: DiagnosisTableProps) {
+export function DiagnosisTable({ diagnoses }: DiagnosisTableProps) {
   return (
-    <Table>
-      {showHeader && (
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t("diagnosis")}</TableHead>
-            <TableHead>{t("status")}</TableHead>
-            <TableHead>{t("verification")}</TableHead>
-            <TableHead>{t("onset")}</TableHead>
-            <TableHead>{t("notes")}</TableHead>
-            <TableHead>{t("created_by")}</TableHead>
-          </TableRow>
-        </TableHeader>
-      )}
+    <Table className="border-separate border-spacing-y-0.5">
+      <TableHeader>
+        <TableRow className="rounded-md overflow-hidden bg-gray-100">
+          <TableHead className="first:rounded-l-md h-auto  py-1 px-2  text-gray-600">
+            {t("diagnosis")}
+          </TableHead>
+          <TableHead className="h-auto  py-1 px-2  text-gray-600">
+            {t("status")}
+          </TableHead>
+          <TableHead className="h-auto  py-1 px-2 text-gray-600">
+            {t("verification")}
+          </TableHead>
+          <TableHead className="h-auto  py-1 px-2  text-gray-600">
+            {t("onset")}
+          </TableHead>
+          <TableHead className="h-auto  py-1 px-2  text-gray-600">
+            {t("notes")}
+          </TableHead>
+          <TableHead className="last:rounded-r-md h-auto  py-1 px-2 text-gray-600">
+            {t("created_by")}
+          </TableHead>
+        </TableRow>
+      </TableHeader>
       <TableBody>
-        {diagnoses.map((diagnosis: Diagnosis, index) => {
-          const isEnteredInError =
-            diagnosis.verification_status === "entered_in_error";
-
-          return (
-            <>
-              <TableRow
-                key={index}
-                className={
-                  isEnteredInError ? "opacity-50 bg-gray-50/50" : undefined
-                }
+        {diagnoses.map((diagnosis) => (
+          <TableRow
+            key={diagnosis.id}
+            className={`rounded-md overflow-hidden bg-gray-50 ${
+              diagnosis.verification_status === "entered_in_error"
+                ? "opacity-50"
+                : ""
+            }`}
+          >
+            <TableCell className="font-medium first:rounded-l-md">
+              {diagnosis.code.display}
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant="outline"
+                className={`whitespace-nowrap ${getStatusBadgeStyle(
+                  diagnosis.clinical_status,
+                )}`}
               >
-                <TableCell className="font-medium">
-                  {diagnosis.code.display}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={`whitespace-nowrap ${getStatusBadgeStyle(diagnosis.clinical_status)}`}
-                  >
-                    {t(diagnosis.clinical_status)}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={isEnteredInError ? "destructive" : "outline"}
-                    className="whitespace-nowrap capitalize"
-                  >
-                    {t(diagnosis.verification_status)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="whitespace-nowrap">
-                  {diagnosis.onset?.onset_datetime
-                    ? new Date(
-                        diagnosis.onset.onset_datetime,
-                      ).toLocaleDateString()
-                    : "-"}
-                </TableCell>
-                <TableCell className="max-w-[200px] truncate">
-                  {diagnosis.note || "-"}
-                </TableCell>
-                <TableCell className="whitespace-nowrap flex items-center gap-2">
-                  <Avatar
-                    name={formatName(diagnosis.created_by)}
-                    className="w-4 h-4"
-                    imageUrl={diagnosis.created_by?.profile_picture_url}
-                  />
-                  <span className="text-sm">
-                    {formatName(diagnosis.created_by)}
-                  </span>
-                </TableCell>
-              </TableRow>
-            </>
-          );
-        })}
+                {t(diagnosis.clinical_status)}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant={
+                  diagnosis.verification_status === "entered_in_error"
+                    ? "destructive"
+                    : "outline"
+                }
+                className="whitespace-nowrap capitalize"
+              >
+                {t(diagnosis.verification_status)}
+              </Badge>
+            </TableCell>
+            <TableCell className="whitespace-nowrap">
+              {diagnosis.onset?.onset_datetime
+                ? new Date(diagnosis.onset.onset_datetime).toLocaleDateString()
+                : "-"}
+            </TableCell>
+            <TableCell className="max-w-[200px] truncate">
+              {diagnosis.note || "-"}
+            </TableCell>
+            <TableCell className="last:rounded-r-md">
+              <div className="flex items-center gap-2">
+                <Avatar
+                  name={diagnosis.created_by.username}
+                  className="w-4 h-4"
+                  imageUrl={diagnosis.created_by.profile_picture_url}
+                />
+                <span className="text-sm">{diagnosis.created_by.username}</span>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   );

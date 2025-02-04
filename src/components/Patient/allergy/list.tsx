@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
-import { PencilIcon } from "lucide-react";
 import { Link } from "raviger";
 import { ReactNode, useState } from "react";
+
+import CareIcon from "@/CAREUI/icons/CareIcon";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -112,9 +113,13 @@ export function AllergyList({
   function AllergyRow({ allergy, isEnteredInError }: AllergyRowProps) {
     return (
       <TableRow
-        className={isEnteredInError ? "opacity-50 bg-gray-50/50" : undefined}
+        className={`rounded-md overflow-hidden bg-gray-50 ${
+          isEnteredInError ? "opacity-50" : ""
+        }`}
       >
-        <TableCell className="font-medium">{allergy.code.display}</TableCell>
+        <TableCell className="font-medium first:rounded-l-md">
+          {allergy.code.display}
+        </TableCell>
         <TableCell>
           <Badge
             variant="outline"
@@ -148,13 +153,15 @@ export function AllergyList({
             {t(allergy.verification_status)}
           </Badge>
         </TableCell>
-        <TableCell className="whitespace-nowrap flex items-center gap-2">
-          <Avatar
-            name={allergy.created_by.username}
-            className="w-4 h-4"
-            imageUrl={allergy.created_by.profile_picture_url}
-          />
-          <span className="text-sm">{allergy.created_by.username}</span>
+        <TableCell className="last:rounded-r-md">
+          <div className="flex items-center gap-2">
+            <Avatar
+              name={allergy.created_by.username}
+              className="w-4 h-4"
+              imageUrl={allergy.created_by.profile_picture_url}
+            />
+            <span className="text-sm">{allergy.created_by.username}</span>
+          </div>
         </TableCell>
       </TableRow>
     );
@@ -166,15 +173,27 @@ export function AllergyList({
       patientId={patientId}
       encounterId={encounterId}
     >
-      <Table>
+      <Table className="border-separate border-spacing-y-0.5">
         <TableHeader>
-          <TableRow>
-            <TableHead>{t("allergen")}</TableHead>
-            <TableHead>{t("category")}</TableHead>
-            <TableHead>{t("status")}</TableHead>
-            <TableHead>{t("criticality")}</TableHead>
-            <TableHead>{t("verification")}</TableHead>
-            <TableHead>{t("created_by")}</TableHead>
+          <TableRow className="rounded-md overflow-hidden bg-gray-100">
+            <TableHead className="first:rounded-l-md h-auto py-1 px-2 text-gray-600">
+              {t("allergen")}
+            </TableHead>
+            <TableHead className="h-auto py-1 px-2 text-gray-600">
+              {t("category")}
+            </TableHead>
+            <TableHead className="h-auto py-1 px-2 text-gray-600">
+              {t("status")}
+            </TableHead>
+            <TableHead className="h-auto py-1 px-2 text-gray-600">
+              {t("criticality")}
+            </TableHead>
+            <TableHead className="h-auto py-1 px-2 text-gray-600">
+              {t("verification")}
+            </TableHead>
+            <TableHead className="last:rounded-r-md h-auto py-1 px-2 text-gray-600">
+              {t("logged_by")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -203,16 +222,19 @@ export function AllergyList({
         </TableBody>
       </Table>
       {hasEnteredInErrorRecords && !showEnteredInError && (
-        <div className="flex justify-start">
-          <Button
-            variant="ghost"
-            size="xs"
-            onClick={() => setShowEnteredInError(true)}
-            className="text-xs underline text-gray-500"
-          >
-            {t("view_all")}
-          </Button>
-        </div>
+        <>
+          <div className="border-b border-dashed border-gray-200 my-2" />
+          <div className="flex justify-center">
+            <Button
+              variant="ghost"
+              size="xs"
+              onClick={() => setShowEnteredInError(true)}
+              className="text-xs underline text-gray-500"
+            >
+              {t("view_all")}
+            </Button>
+          </div>
+        </>
       )}
     </AllergyListLayout>
   );
@@ -230,15 +252,15 @@ const AllergyListLayout = ({
   children: ReactNode;
 }) => {
   return (
-    <Card>
-      <CardHeader className="px-4 py-0 pt-4 flex justify-between flex-row">
+    <Card className="border-none rounded-sm">
+      <CardHeader className="px-4 pt-4 pb-2 flex justify-between flex-row">
         <CardTitle>{t("allergies")}</CardTitle>
         {facilityId && encounterId && (
           <Link
             href={`/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/questionnaire/allergy_intolerance`}
-            className="flex items-center gap-1 text-sm hover:text-gray-500"
+            className="flex items-center gap-1 text-sm hover:text-gray-500 text-gray-950 underline"
           >
-            <PencilIcon size={12} />
+            <CareIcon icon="l-edit" className="w-4 h-4" />
             {t("edit")}
           </Link>
         )}
