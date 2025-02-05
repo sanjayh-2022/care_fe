@@ -1,6 +1,12 @@
 import { t } from "i18next";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Table,
   TableBody,
@@ -12,22 +18,11 @@ import {
 
 import { Avatar } from "@/components/Common/Avatar";
 
-import { Diagnosis } from "@/types/emr/diagnosis/diagnosis";
-
-export const getStatusBadgeStyle = (status: string) => {
-  switch (status?.toLowerCase()) {
-    case "active":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "inactive":
-      return "bg-gray-100 text-gray-800 border-gray-200";
-    case "resolved":
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    case "recurrence":
-      return "bg-orange-100 text-orange-800 border-orange-200";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
-  }
-};
+import {
+  DIAGNOSIS_CLINICAL_STATUS_STYLES,
+  DIAGNOSIS_VERIFICATION_STATUS_STYLES,
+  Diagnosis,
+} from "@/types/emr/diagnosis/diagnosis";
 
 interface DiagnosisTableProps {
   diagnoses: Diagnosis[];
@@ -59,60 +54,99 @@ export function DiagnosisTable({ diagnoses }: DiagnosisTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {diagnoses.map((diagnosis) => (
-          <TableRow
-            key={diagnosis.id}
-            className={`rounded-md overflow-hidden bg-gray-50 ${
-              diagnosis.verification_status === "entered_in_error"
-                ? "opacity-50"
-                : ""
-            }`}
-          >
-            <TableCell className="font-medium first:rounded-l-md">
-              {diagnosis.code.display}
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant="outline"
-                className={`whitespace-nowrap ${getStatusBadgeStyle(
-                  diagnosis.clinical_status,
-                )}`}
-              >
-                {t(diagnosis.clinical_status)}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant={
-                  diagnosis.verification_status === "entered_in_error"
-                    ? "destructive"
-                    : "outline"
-                }
-                className="whitespace-nowrap capitalize"
-              >
-                {t(diagnosis.verification_status)}
-              </Badge>
-            </TableCell>
-            <TableCell className="whitespace-nowrap">
-              {diagnosis.onset?.onset_datetime
-                ? new Date(diagnosis.onset.onset_datetime).toLocaleDateString()
-                : "-"}
-            </TableCell>
-            <TableCell className="max-w-[200px] truncate">
-              {diagnosis.note || "-"}
-            </TableCell>
-            <TableCell className="last:rounded-r-md">
-              <div className="flex items-center gap-2">
-                <Avatar
-                  name={diagnosis.created_by.username}
-                  className="w-4 h-4"
-                  imageUrl={diagnosis.created_by.profile_picture_url}
-                />
-                <span className="text-sm">{diagnosis.created_by.username}</span>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
+        {diagnoses.map((diagnosis) => {
+          const note = diagnosis.note || "";
+          const MAX_NOTE_LENGTH = 15;
+          const isLongNote = note.length > MAX_NOTE_LENGTH;
+          const displayNote = isLongNote
+            ? `${note.slice(0, MAX_NOTE_LENGTH)}..`
+            : note;
+
+          return (
+            <TableRow
+              key={diagnosis.id}
+              className={`rounded-md overflow-hidden bg-gray-50 ${
+                diagnosis.verification_status === "entered_in_error"
+                  ? "opacity-50"
+                  : ""
+              }`}
+            >
+              <TableCell className="font-medium first:rounded-l-md">
+                {diagnosis.code.display}
+              </TableCell>
+              <TableCell>
+                <Badge
+                  variant="outline"
+                  className={`whitespace-nowrap ${
+                    DIAGNOSIS_CLINICAL_STATUS_STYLES[diagnosis.clinical_status]
+                  }`}
+                >
+                  {t(diagnosis.clinical_status)}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge
+                  variant="outline"
+                  className={`whitespace-nowrap capitalize ${
+                    DIAGNOSIS_VERIFICATION_STATUS_STYLES[
+                      diagnosis.verification_status
+                    ]
+                  }`}
+                >
+                  {t(diagnosis.verification_status)}
+                </Badge>
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {diagnosis.onset?.onset_datetime
+                  ? new Date(
+                      diagnosis.onset.onset_datetime,
+                    ).toLocaleDateString()
+                  : "-"}
+              </TableCell>
+              <TableCell className="max-w-[200px]">
+                {note ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-950 truncate">
+                      {displayNote}
+                    </span>
+                    {isLongNote && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-xs shrink-0"
+                          >
+                            {t("see_note")}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 p-4">
+                          <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                            {note}
+                          </p>
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  </div>
+                ) : (
+                  "-"
+                )}
+              </TableCell>
+              <TableCell className="last:rounded-r-md">
+                <div className="flex items-center gap-2">
+                  <Avatar
+                    name={diagnosis.created_by.username}
+                    className="w-4 h-4"
+                    imageUrl={diagnosis.created_by.profile_picture_url}
+                  />
+                  <span className="text-sm">
+                    {diagnosis.created_by.username}
+                  </span>
+                </div>
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );
