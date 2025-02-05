@@ -191,7 +191,7 @@ export function AllergyList({
             </div>
           )}
         </TableCell>
-        <TableCell>
+        <TableCell className="last:rounded-r-md">
           <div className="flex items-center gap-2">
             <Avatar
               name={allergy.created_by.username}
@@ -229,10 +229,10 @@ export function AllergyList({
             <TableHead className="h-auto py-1 px-2 text-gray-600">
               {t("verification")}
             </TableHead>
-            <TableHead className="last:rounded-r-md h-auto py-1 px-2 text-gray-600">
+            <TableHead className="h-auto py-1 px-2 text-gray-600">
               {t("notes")}
             </TableHead>
-            <TableHead className="h-auto py-1 px-2 text-gray-600">
+            <TableHead className="last:rounded-r-md h-auto py-1 px-2 text-gray-600">
               {t("logged_by")}
             </TableHead>
           </TableRow>

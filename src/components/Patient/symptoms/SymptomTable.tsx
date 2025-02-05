@@ -49,7 +49,7 @@ export function SymptomTable({ symptoms }: SymptomTableProps) {
           <TableHead className="h-auto  py-1 px-2  text-gray-600">
             {t("notes")}
           </TableHead>
-          <TableHead className="last:rounded-r-md h-auto  py-1 px-2  text-gray-600">
+          <TableHead className="last:rounded-r-md h-auto py-1 px-2 text-gray-600">
             {t("logged_by")}
           </TableHead>
         </TableRow>
