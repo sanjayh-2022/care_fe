@@ -1,13 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
+import {
+  BeakerIcon,
+  CookingPotIcon,
+  HeartPulseIcon,
+  LeafIcon,
+} from "lucide-react";
 import { Link } from "raviger";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -21,7 +32,12 @@ import {
 import { Avatar } from "@/components/Common/Avatar";
 
 import query from "@/Utils/request/query";
-import { AllergyIntolerance } from "@/types/emr/allergyIntolerance/allergyIntolerance";
+import {
+  ALLERGY_CLINICAL_STATUS_STYLES,
+  ALLERGY_CRITICALITY_STYLES,
+  ALLERGY_VERIFICATION_STATUS_STYLES,
+  AllergyIntolerance,
+} from "@/types/emr/allergyIntolerance/allergyIntolerance";
 import allergyIntoleranceApi from "@/types/emr/allergyIntolerance/allergyIntoleranceApi";
 
 interface AllergyListProps {
@@ -29,6 +45,13 @@ interface AllergyListProps {
   patientId: string;
   encounterId?: string;
 }
+
+const CATEGORY_ICONS: Record<string, ReactNode> = {
+  food: <CookingPotIcon className="h-4 w-4" />,
+  medication: <BeakerIcon className="h-4 w-4" />,
+  environment: <LeafIcon className="h-4 w-4" />,
+  biologic: <HeartPulseIcon className="h-4 w-4" />,
+};
 
 export function AllergyList({
   facilityId,
@@ -81,79 +104,94 @@ export function AllergyList({
     );
   }
 
-  const getStatusBadgeStyle = (status: string | undefined) => {
-    switch (status?.toLowerCase()) {
-      case "active":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "inactive":
-        return "bg-gray-100 text-gray-800 border-gray-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getCategoryBadgeStyle = (category: string) => {
-    switch (category?.toLowerCase()) {
-      case "food":
-        return "bg-orange-100 text-orange-800 border-orange-200";
-      case "medication":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "environment":
-        return "bg-green-100 text-green-800 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
   interface AllergyRowProps {
     allergy: AllergyIntolerance;
-    isEnteredInError?: boolean;
   }
 
-  function AllergyRow({ allergy, isEnteredInError }: AllergyRowProps) {
+  function AllergyRow({ allergy }: AllergyRowProps) {
+    const MAX_NOTE_LENGTH = 15;
+    const note = allergy.note || "";
+    const isLongNote = note.length > MAX_NOTE_LENGTH;
+    const displayNote = isLongNote
+      ? `${note.slice(0, MAX_NOTE_LENGTH)}..`
+      : note;
+
+    useEffect(() => {
+      console.log(
+        "Allergy Note:",
+        allergy.note,
+        isLongNote,
+        displayNote,
+        note.length,
+      );
+    }, [allergy.note, isLongNote, displayNote, note.length]);
+
     return (
-      <TableRow
-        className={`rounded-md overflow-hidden bg-gray-50 ${
-          isEnteredInError ? "opacity-50" : ""
-        }`}
-      >
-        <TableCell className="font-medium first:rounded-l-md">
+      <TableRow className="rounded-md overflow-hidden bg-gray-50">
+        <TableCell className="first:rounded-l-md">
+          <div className="flex items-center">
+            {CATEGORY_ICONS[allergy.category ?? ""]}
+          </div>
+        </TableCell>
+        <TableCell className="font-medium pl-0 ">
           {allergy.code.display}
         </TableCell>
         <TableCell>
           <Badge
             variant="outline"
-            className={`whitespace-nowrap ${getCategoryBadgeStyle(
-              allergy.category ?? "",
-            )}`}
-          >
-            {t(allergy.category)}
-          </Badge>
-        </TableCell>
-        <TableCell>
-          <Badge
-            variant="outline"
-            className={`whitespace-nowrap ${getStatusBadgeStyle(
-              allergy.clinical_status,
-            )}`}
+            className={`whitespace-nowrap ${
+              ALLERGY_CLINICAL_STATUS_STYLES[allergy.clinical_status]
+            }`}
           >
             {t(allergy.clinical_status)}
           </Badge>
         </TableCell>
         <TableCell>
-          <Badge variant="secondary" className="whitespace-nowrap">
+          <Badge
+            variant="outline"
+            className={`whitespace-nowrap ${
+              ALLERGY_CRITICALITY_STYLES[allergy.criticality]
+            }`}
+          >
             {t(allergy.criticality)}
           </Badge>
         </TableCell>
         <TableCell>
           <Badge
-            variant={isEnteredInError ? "destructive" : "outline"}
-            className="whitespace-nowrap capitalize"
+            variant="outline"
+            className={`whitespace-nowrap capitalize ${
+              ALLERGY_VERIFICATION_STATUS_STYLES[allergy.verification_status]
+            }`}
           >
             {t(allergy.verification_status)}
           </Badge>
         </TableCell>
-        <TableCell className="last:rounded-r-md">
+        <TableCell className="text-sm text-gray-950">
+          {note && (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-950 max-w-[200px]">{displayNote}</span>
+              {isLongNote && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs shrink-0"
+                    >
+                      {t("see_note")}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-4">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {note}
+                    </p>
+                  </PopoverContent>
+                </Popover>
+              )}
+            </div>
+          )}
+        </TableCell>
+        <TableCell>
           <div className="flex items-center gap-2">
             <Avatar
               name={allergy.created_by.username}
@@ -176,11 +214,11 @@ export function AllergyList({
       <Table className="border-separate border-spacing-y-0.5">
         <TableHeader>
           <TableRow className="rounded-md overflow-hidden bg-gray-100">
-            <TableHead className="first:rounded-l-md h-auto py-1 px-2 text-gray-600">
-              {t("allergen")}
+            <TableHead className="first:rounded-l-md h-auto py-1 pl-1 pr-0 text-gray-600">
+              Cat.
             </TableHead>
-            <TableHead className="h-auto py-1 px-2 text-gray-600">
-              {t("category")}
+            <TableHead className="h-auto py-1 pl-1 pr-2 text-gray-600">
+              {t("allergen")}
             </TableHead>
             <TableHead className="h-auto py-1 px-2 text-gray-600">
               {t("status")}
@@ -192,6 +230,9 @@ export function AllergyList({
               {t("verification")}
             </TableHead>
             <TableHead className="last:rounded-r-md h-auto py-1 px-2 text-gray-600">
+              {t("notes")}
+            </TableHead>
+            <TableHead className="h-auto py-1 px-2 text-gray-600">
               {t("logged_by")}
             </TableHead>
           </TableRow>
@@ -213,11 +254,7 @@ export function AllergyList({
                 (allergy) => allergy.verification_status === "entered_in_error",
               )
               .map((allergy) => (
-                <AllergyRow
-                  key={allergy.id}
-                  allergy={allergy}
-                  isEnteredInError
-                />
+                <AllergyRow key={allergy.id} allergy={allergy} />
               ))}
         </TableBody>
       </Table>

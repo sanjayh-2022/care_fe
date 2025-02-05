@@ -54,7 +54,7 @@ export function DiagnosisTable({ diagnoses }: DiagnosisTableProps) {
             {t("notes")}
           </TableHead>
           <TableHead className="last:rounded-r-md h-auto  py-1 px-2 text-gray-600">
-            {t("created_by")}
+            {t("logged_by")}
           </TableHead>
         </TableRow>
       </TableHeader>

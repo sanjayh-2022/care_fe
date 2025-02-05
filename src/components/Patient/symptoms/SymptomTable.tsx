@@ -12,22 +12,12 @@ import {
 
 import { Avatar } from "@/components/Common/Avatar";
 
-import { Symptom } from "@/types/emr/symptom/symptom";
-
-export const getStatusBadgeStyle = (status: string) => {
-  switch (status?.toLowerCase()) {
-    case "active":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "inactive":
-      return "bg-gray-100 text-gray-800 border-gray-200";
-    case "resolved":
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    case "recurrence":
-      return "bg-orange-100 text-orange-800 border-orange-200";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
-  }
-};
+import {
+  SYMPTOM_CLINICAL_STATUS_STYLES,
+  SYMPTOM_SEVERITY_STYLES,
+  SYMPTOM_VERIFICATION_STATUS_STYLES,
+  Symptom,
+} from "@/types/emr/symptom/symptom";
 
 interface SymptomTableProps {
   symptoms: Symptom[];
@@ -71,9 +61,19 @@ export function SymptomTable({ symptoms }: SymptomTableProps) {
             <TableCell>
               <Badge
                 variant="outline"
-                className={`whitespace-nowrap ${getStatusBadgeStyle(
-                  symptom.clinical_status,
-                )}`}
+                className={`whitespace-nowrap ${
+                  SYMPTOM_SEVERITY_STYLES[symptom.severity]
+                }`}
+              >
+                {t(symptom.severity)}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant="outline"
+                className={`whitespace-nowrap ${
+                  SYMPTOM_CLINICAL_STATUS_STYLES[symptom.clinical_status]
+                }`}
               >
                 {t(symptom.clinical_status)}
               </Badge>
@@ -81,21 +81,11 @@ export function SymptomTable({ symptoms }: SymptomTableProps) {
             <TableCell>
               <Badge
                 variant="outline"
-                className={`whitespace-nowrap ${getStatusBadgeStyle(
-                  symptom.clinical_status,
-                )}`}
-              >
-                {t(symptom.clinical_status)}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant={
-                  symptom.verification_status === "entered_in_error"
-                    ? "destructive"
-                    : "outline"
-                }
-                className="whitespace-nowrap capitalize"
+                className={`whitespace-nowrap capitalize ${
+                  SYMPTOM_VERIFICATION_STATUS_STYLES[
+                    symptom.verification_status
+                  ]
+                }`}
               >
                 {t(symptom.verification_status)}
               </Badge>
