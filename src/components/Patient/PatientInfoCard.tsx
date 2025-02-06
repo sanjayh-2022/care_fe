@@ -352,6 +352,13 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
                   ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>{t("actions")}</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <Link
+                      href={`/facility/${encounter.facility.id}/patient/${patient.id}/encounter/${encounter.id}/treatment_summary`}
+                    >
+                      {t("treatment_summary")}
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleMarkAsComplete}>
                     {t("mark_as_complete")}
                   </DropdownMenuItem>
