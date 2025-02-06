@@ -29,7 +29,6 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
 
   const encounterSettings = [
     { id: "encounter_settings", label: t("encounter_settings") },
-    { id: "treatment_summary", label: t("treatment_summary") },
   ];
 
   return (
@@ -60,12 +59,12 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
         <div className="space-y-2">
           {encounterSettings.map((item) => (
             <div key={item.id} className="flex items-center space-x-2 px-4">
-              <label
-                htmlFor={item.id}
+              <Link
+                href={`/facility/${encounter.facility.id}/patient/${encounter.patient.id}/encounter/${encounter.id}/questionnaire/encounter`}
                 className="text-sm text-gray-950 underline font-semibold"
               >
                 {item.label}
-              </label>
+              </Link>
             </div>
           ))}
         </div>
