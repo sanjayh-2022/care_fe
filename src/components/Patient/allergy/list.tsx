@@ -36,6 +36,7 @@ import {
   ALLERGY_CLINICAL_STATUS_STYLES,
   ALLERGY_CRITICALITY_STYLES,
   ALLERGY_VERIFICATION_STATUS_STYLES,
+  AllergyCategory,
   AllergyIntolerance,
 } from "@/types/emr/allergyIntolerance/allergyIntolerance";
 import allergyIntoleranceApi from "@/types/emr/allergyIntolerance/allergyIntoleranceApi";
@@ -48,11 +49,17 @@ interface AllergyListProps {
   encounterStatus?: Encounter["status"];
 }
 
-const CATEGORY_ICONS: Record<string, ReactNode> = {
-  food: <CookingPotIcon className="h-4 w-4" />,
-  medication: <BeakerIcon className="h-4 w-4" />,
-  environment: <LeafIcon className="h-4 w-4" />,
-  biologic: <HeartPulseIcon className="h-4 w-4" />,
+export const CATEGORY_ICONS: Record<AllergyCategory, ReactNode> = {
+  food: <CookingPotIcon className="h-4 w-4" aria-label="Food allergy" />,
+  medication: (
+    <BeakerIcon className="h-4 w-4" aria-label="Medication allergy" />
+  ),
+  environment: (
+    <LeafIcon className="h-4 w-4" aria-label="Environmental allergy" />
+  ),
+  biologic: (
+    <HeartPulseIcon className="h-4 w-4" aria-label="Biologic allergy" />
+  ),
 };
 
 export function AllergyList({
