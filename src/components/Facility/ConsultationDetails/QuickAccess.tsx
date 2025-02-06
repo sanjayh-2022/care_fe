@@ -121,30 +121,6 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
         </div>
       </section>
 
-      {/* Tags */}
-      <section>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-medium">{t("tags")}</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            // onClick={onTagUpdate}
-            className="text-sm  font-semibold border-gray-400 text-gray-950"
-          >
-            {t("add_tags")}
-            <CareIcon icon="l-plus" className="ml-1 h-3 w-3" />
-          </Button>
-        </div>
-        <div className="flex flex-wrap gap-2 bg-gray-50 p-2 rounded-md ">
-          <Badge variant="destructive" className="text-sm">
-            {t("medico_legal_case")}
-          </Badge>
-          <Badge variant="destructive" className="text-sm">
-            {t("medico_legal_case")}
-          </Badge>
-        </div>
-      </section>
-
       {/* Hospitalisation Details */}
       {encounter.hospitalization && (
         <section>
