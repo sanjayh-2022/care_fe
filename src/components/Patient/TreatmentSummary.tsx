@@ -48,7 +48,7 @@ export default function TreatmentSummary({
   if (!encounter?.patient) {
     return (
       <div className="flex h-[200px] items-center justify-center rounded-lg border-2 border-dashed p-4 text-gray-500">
-        {t("no_patient_data_found")}
+        {t("no_patient_record_found")}
       </div>
     );
   }
@@ -111,32 +111,22 @@ export default function TreatmentSummary({
                   isStrong
                 />
               )}
-              {encounter.hospitalization && (
-                <>
-                  <DetailRow
-                    label={t("admission_source")}
-                    value={t(
-                      `encounter_admit_sources__${encounter.hospitalization.admit_source}`,
-                    )}
-                    isStrong
-                  />
-                  {encounter.hospitalization.re_admission && (
-                    <DetailRow
-                      label={t("readmission")}
-                      value={t("yes")}
-                      isStrong
-                    />
+              <DetailRow
+                label={t("priority")}
+                value={t(`encounter_priority__${encounter.priority}`)}
+                isStrong
+              />
+              {encounter.hospitalization?.admit_source && (
+                <DetailRow
+                  label={t("admission_source")}
+                  value={t(
+                    `encounter_admit_sources__${encounter.hospitalization.admit_source}`,
                   )}
-                  {encounter.hospitalization.discharge_disposition && (
-                    <DetailRow
-                      label={t("discharge_disposition")}
-                      value={t(
-                        `encounter_discharge_disposition__${encounter.hospitalization.discharge_disposition}`,
-                      )}
-                      isStrong
-                    />
-                  )}
-                </>
+                  isStrong
+                />
+              )}
+              {encounter.hospitalization?.re_admission && (
+                <DetailRow label={t("readmission")} value={t("yes")} isStrong />
               )}
             </div>
             <div className="space-y-3">
@@ -160,11 +150,7 @@ export default function TreatmentSummary({
                 value={t(`encounter_status__${encounter.status}`)}
                 isStrong
               />
-              <DetailRow
-                label={t("priority")}
-                value={t(`encounter_priority__${encounter.priority}`)}
-                isStrong
-              />
+
               {encounter.consulting_doctor && (
                 <DetailRow
                   label={t("consulting_doctor")}
@@ -182,6 +168,15 @@ export default function TreatmentSummary({
                 <DetailRow
                   label={t("external_id")}
                   value={encounter.external_identifier}
+                  isStrong
+                />
+              )}
+              {encounter.hospitalization?.discharge_disposition && (
+                <DetailRow
+                  label={t("discharge_disposition")}
+                  value={t(
+                    `encounter_discharge_disposition__${encounter.hospitalization.discharge_disposition}`,
+                  )}
                   isStrong
                 />
               )}

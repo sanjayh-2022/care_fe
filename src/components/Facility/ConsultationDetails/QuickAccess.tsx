@@ -1,3 +1,4 @@
+import { Pencil2Icon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "raviger";
 import { useTranslation } from "react-i18next";
@@ -27,10 +28,6 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
 
   const questionnaireList = response?.results || [];
 
-  const encounterSettings = [
-    { id: "encounter_settings", label: t("encounter_settings") },
-  ];
-
   return (
     <div className="flex flex-col gap-6">
       {/* Questionnaire Section */}
@@ -44,7 +41,10 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
               // className="w-full justify-start gap-2 h-auto py-2"
               href={`/facility/${encounter.facility.id}/patient/${encounter.patient.id}/encounter/${encounter.id}/questionnaire/${item.slug}`}
             >
-              <CareIcon icon="l-file-alt" className="h-4 w-4 text-gray-950" />
+              <CareIcon
+                icon="l-file-edit-alt"
+                className="h-4 w-4 text-gray-950"
+              />
               {item.title}
             </Link>
           ))}
@@ -59,16 +59,26 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
           {t("update_encounter_details")}
         </h3>
         <div className="space-y-2">
-          {encounterSettings.map((item) => (
-            <div key={item.id} className="flex items-center space-x-2 px-4">
+          <div className="flex flex-col space-y-2 px-4">
+            <div className="flex items-center space-x-2">
+              <Pencil2Icon className="h-4 w-4" />
               <Link
                 href={`/facility/${encounter.facility.id}/patient/${encounter.patient.id}/encounter/${encounter.id}/questionnaire/encounter`}
                 className="text-sm text-gray-950 underline font-semibold"
               >
-                {item.label}
+                {t("encounter_settings")}
               </Link>
             </div>
-          ))}
+            <div className="flex items-center space-x-2">
+              <Pencil2Icon className="h-4 w-4" />
+              <Link
+                href={`/facility/${encounter.facility.id}/patient/${encounter.patient.id}/encounter/${encounter.id}/treatment_summary`}
+                className="text-sm text-gray-950 underline font-semibold"
+              >
+                {t("treatment_summary")}
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
