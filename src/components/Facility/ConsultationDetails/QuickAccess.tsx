@@ -155,7 +155,9 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
               <div className="flex justify-between">
                 <span className="text-gray-500">{t("re_admission")}</span>
                 <span className="font-semibold text-gray-950">
-                  {t(`${encounter.hospitalization?.re_admission}`)}
+                  {t(
+                    `encounter_re_admission__${encounter.hospitalization?.re_admission}`,
+                  )}
                 </span>
               </div>
               <Button
