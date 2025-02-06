@@ -30,6 +30,8 @@ import { CreateAppointmentQuestion } from "@/types/scheduling/schedule";
 interface Props {
   encounter?: Encounter;
   patientId: string;
+  isPrintPreview?: boolean;
+  onlyUnstructured?: boolean;
 }
 
 type ResponseValueType = {
@@ -282,6 +284,8 @@ function ResponseCard({ item }: { item: QuestionnaireResponse }) {
 export default function QuestionnaireResponsesList({
   encounter,
   patientId,
+  isPrintPreview = false,
+  onlyUnstructured,
 }: Props) {
   const { t } = useTranslation();
   const [qParams, setQueryParams] = useQueryParams<{ page?: number }>();
@@ -292,8 +296,11 @@ export default function QuestionnaireResponsesList({
       pathParams: { patientId },
       queryParams: {
         encounter: encounter?.id,
-        limit: RESULTS_PER_PAGE_LIMIT,
-        offset: ((qParams.page ?? 1) - 1) * RESULTS_PER_PAGE_LIMIT,
+        limit: isPrintPreview ? 100 : RESULTS_PER_PAGE_LIMIT,
+        offset: isPrintPreview
+          ? undefined
+          : ((qParams.page ?? 1) - 1) * RESULTS_PER_PAGE_LIMIT,
+        only_unstructured: onlyUnstructured,
       },
     }),
   });
@@ -322,24 +329,28 @@ export default function QuestionnaireResponsesList({
                     </li>
                   ),
                 )}
-                <div className="flex w-full items-center justify-center mt-4">
-                  <div
-                    className={cn(
-                      "flex w-full justify-center",
-                      (questionnarieResponses?.count ?? 0) >
-                        RESULTS_PER_PAGE_LIMIT
-                        ? "visible"
-                        : "invisible",
-                    )}
-                  >
-                    <PaginationComponent
-                      cPage={qParams.page ?? 1}
-                      defaultPerPage={RESULTS_PER_PAGE_LIMIT}
-                      data={{ totalCount: questionnarieResponses?.count ?? 0 }}
-                      onChange={(page) => setQueryParams({ page })}
-                    />
+                {!isPrintPreview && (
+                  <div className="flex w-full items-center justify-center mt-4">
+                    <div
+                      className={cn(
+                        "flex w-full justify-center",
+                        (questionnarieResponses?.count ?? 0) >
+                          RESULTS_PER_PAGE_LIMIT
+                          ? "visible"
+                          : "invisible",
+                      )}
+                    >
+                      <PaginationComponent
+                        cPage={qParams.page ?? 1}
+                        defaultPerPage={RESULTS_PER_PAGE_LIMIT}
+                        data={{
+                          totalCount: questionnarieResponses?.count ?? 0,
+                        }}
+                        onChange={(page) => setQueryParams({ page })}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </ul>
             )}
           </div>

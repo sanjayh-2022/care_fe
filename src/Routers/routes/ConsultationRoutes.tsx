@@ -1,6 +1,7 @@
 import QuestionnaireResponseView from "@/components/Facility/ConsultationDetails/QuestionnaireResponseView";
 import EncounterQuestionnaire from "@/components/Patient/EncounterQuestionnaire";
 import FileUploadPage from "@/components/Patient/FileUploadPage";
+import TreatmentSummary from "@/components/Patient/TreatmentSummary";
 
 import { AppRoutes } from "@/Routers/AppRouter";
 import { EncounterShow } from "@/pages/Encounters/EncounterShow";
@@ -11,6 +12,10 @@ const consultationRoutes: AppRoutes = {
     facilityId,
     encounterId,
   }) => <PrintPrescription facilityId={facilityId} encounterId={encounterId} />,
+  "/facility/:facilityId/encounter/:encounterId/treatment-summary": ({
+    facilityId,
+    encounterId,
+  }) => <TreatmentSummary facilityId={facilityId} encounterId={encounterId} />,
   "/facility/:facilityId/encounter/:encounterId/:tab": ({
     facilityId,
     encounterId,

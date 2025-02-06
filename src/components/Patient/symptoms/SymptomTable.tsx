@@ -27,9 +27,13 @@ import {
 
 interface SymptomTableProps {
   symptoms: Symptom[];
+  isPrintPreview?: boolean;
 }
 
-export function SymptomTable({ symptoms }: SymptomTableProps) {
+export function SymptomTable({
+  symptoms,
+  isPrintPreview = false,
+}: SymptomTableProps) {
   return (
     <Table className="border-separate border-spacing-y-0.5">
       <TableHeader>
@@ -110,10 +114,10 @@ export function SymptomTable({ symptoms }: SymptomTableProps) {
               <TableCell className="max-w-[200px]">
                 {note ? (
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-950 truncate">
-                      {displayNote}
+                    <span className="text-gray-950">
+                      {!isPrintPreview ? displayNote : note}
                     </span>
-                    {isLongNote && (
+                    {!isPrintPreview && isLongNote && (
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
