@@ -892,6 +892,8 @@
   "encounter_priority__timing_critical": "Timing critical",
   "encounter_priority__urgent": "Urgent",
   "encounter_priority__use_as_directed": "Use as directed",
+  "encounter_re_admission__false": "No",
+  "encounter_re_admission__true": "Yes",
   "encounter_settings": "Encounter Settings",
   "encounter_status": "Encounter Status",
   "encounter_status__cancelled": "Cancelled",
