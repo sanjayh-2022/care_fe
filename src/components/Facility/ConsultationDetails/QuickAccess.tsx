@@ -51,6 +51,8 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
         </div>
       </section>
 
+      <div className="w-full border-t border-dashed border-gray-300" />
+
       {/* Update Encounter Details */}
       <section className="text-gray-950">
         <h3 className="text-lg font-medium mb-3">
@@ -69,6 +71,8 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
           ))}
         </div>
       </section>
+
+      <div className="w-full border-t border-dashed border-gray-300" />
 
       {/* Departments and Teams */}
       <section>
@@ -120,50 +124,52 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
         </div>
       </section>
 
-      {/* Hospitalisation Details */}
       {encounter.hospitalization && (
-        <section>
-          <h3 className="text-lg font-medium mb-3">
-            {t("hospitalisation_details")}
-          </h3>
-          <div className="space-y-2 text-sm mt-4 bg-gray-50 p-2 rounded-md">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">{t("admit_source")}</span>
-              <span className="font-semibold text-gray-950">
-                {t(
-                  `encounter_admit_sources__${encounter.hospitalization?.admit_source}`,
-                )}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                {t("diet_preference")}
-              </span>
-              <span className="font-semibold text-gray-950">
-                {t(
-                  `encounter_diet_preference__${encounter.hospitalization?.diet_preference}`,
-                )}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">{t("re_admission")}</span>
-              <span className="font-semibold text-gray-950">
-                {t(`${encounter.hospitalization?.re_admission}`)}
-              </span>
-            </div>
-            <Button
-              asChild
-              variant="outline"
-              className="font-semibold rounded-md border-gray-400 text-gray-950"
-            >
-              <Link
-                href={`/facility/${encounter.facility.id}/patient/${encounter.patient.id}/encounter/${encounter.id}/questionnaire/encounter`}
+        <>
+          <div className="w-full border-t border-dashed border-gray-300" />
+
+          {/* Hospitalisation Details */}
+          <section>
+            <h3 className="text-lg font-medium mb-3">
+              {t("hospitalisation_details")}
+            </h3>
+            <div className="space-y-2 text-sm mt-4 bg-gray-50 p-2 rounded-md">
+              <div className="flex justify-between">
+                <span className="text-gray-500">{t("admit_source")}</span>
+                <span className="font-semibold text-gray-950">
+                  {t(
+                    `encounter_admit_sources__${encounter.hospitalization?.admit_source}`,
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">{t("diet_preference")}</span>
+                <span className="font-semibold text-gray-950">
+                  {t(
+                    `encounter_diet_preference__${encounter.hospitalization?.diet_preference}`,
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">{t("re_admission")}</span>
+                <span className="font-semibold text-gray-950">
+                  {t(`${encounter.hospitalization?.re_admission}`)}
+                </span>
+              </div>
+              <Button
+                asChild
+                variant="outline"
+                className="font-semibold rounded-md border-gray-400 text-gray-950"
               >
-                {t("update_hospitalisation_details")}
-              </Link>
-            </Button>
-          </div>
-        </section>
+                <Link
+                  href={`/facility/${encounter.facility.id}/patient/${encounter.patient.id}/encounter/${encounter.id}/questionnaire/encounter`}
+                >
+                  {t("update_hospitalisation_details")}
+                </Link>
+              </Button>
+            </div>
+          </section>
+        </>
       )}
     </div>
   );
