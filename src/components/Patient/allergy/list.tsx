@@ -34,13 +34,16 @@ import {
 import { Avatar } from "@/components/Common/Avatar";
 
 import query from "@/Utils/request/query";
+import { formatName } from "@/Utils/utils";
 import {
   ALLERGY_CLINICAL_STATUS_STYLES,
   ALLERGY_CRITICALITY_STYLES,
   ALLERGY_VERIFICATION_STATUS_STYLES,
+  AllergyCategory,
   AllergyIntolerance,
 } from "@/types/emr/allergyIntolerance/allergyIntolerance";
 import allergyIntoleranceApi from "@/types/emr/allergyIntolerance/allergyIntoleranceApi";
+import { Encounter, completedEncounterStatus } from "@/types/emr/encounter";
 
 interface AllergyListProps {
   facilityId?: string;
@@ -48,13 +51,20 @@ interface AllergyListProps {
   encounterId?: string;
   className?: string;
   isPrintPreview?: boolean;
+  encounterStatus?: Encounter["status"];
 }
 
-const CATEGORY_ICONS: Record<string, ReactNode> = {
-  food: <CookingPotIcon className="h-4 w-4" />,
-  medication: <BeakerIcon className="h-4 w-4" />,
-  environment: <LeafIcon className="h-4 w-4" />,
-  biologic: <HeartPulseIcon className="h-4 w-4" />,
+export const CATEGORY_ICONS: Record<AllergyCategory, ReactNode> = {
+  food: <CookingPotIcon className="h-4 w-4" aria-label="Food allergy" />,
+  medication: (
+    <BeakerIcon className="h-4 w-4" aria-label="Medication allergy" />
+  ),
+  environment: (
+    <LeafIcon className="h-4 w-4" aria-label="Environmental allergy" />
+  ),
+  biologic: (
+    <HeartPulseIcon className="h-4 w-4" aria-label="Biologic allergy" />
+  ),
 };
 
 export function AllergyList({
@@ -63,13 +73,19 @@ export function AllergyList({
   encounterId,
   className,
   isPrintPreview = false,
+  encounterStatus,
 }: AllergyListProps) {
   const [showEnteredInError, setShowEnteredInError] = useState(isPrintPreview);
 
   const { data: allergies, isLoading } = useQuery({
-    queryKey: ["allergies", patientId, encounterId],
+    queryKey: ["allergies", patientId, encounterId, encounterStatus],
     queryFn: query(allergyIntoleranceApi.getAllergy, {
       pathParams: { patientId },
+      queryParams: {
+        encounter: completedEncounterStatus.includes(encounterStatus as string)
+          ? encounterId
+          : undefined,
+      },
     }),
   });
 
@@ -133,7 +149,11 @@ export function AllergyList({
     }, [allergy.note, isLongNote, displayNote, note.length]);
 
     return (
-      <TableRow className="rounded-md overflow-hidden bg-gray-50">
+      <TableRow
+        className={`rounded-md overflow-hidden bg-gray-50 ${
+          allergy.verification_status === "entered_in_error" ? "opacity-50" : ""
+        }`}
+      >
         <TableCell className="first:rounded-l-md">
           <div className="flex items-center">
             {CATEGORY_ICONS[allergy.category ?? ""]}
@@ -206,7 +226,7 @@ export function AllergyList({
               className="w-4 h-4"
               imageUrl={allergy.created_by.profile_picture_url}
             />
-            <span className="text-sm">{allergy.created_by.username}</span>
+            <span className="text-sm">{formatName(allergy.created_by)}</span>
           </div>
         </TableCell>
       </TableRow>
@@ -224,9 +244,7 @@ export function AllergyList({
       <Table className="border-separate border-spacing-y-0.5">
         <TableHeader>
           <TableRow className="rounded-md overflow-hidden bg-gray-100">
-            <TableHead className="first:rounded-l-md h-auto py-1 pl-1 pr-0 text-gray-600">
-              Cat.
-            </TableHead>
+            <TableHead className="first:rounded-l-md h-auto py-1 pl-1 pr-0 text-gray-600"></TableHead>
             <TableHead className="h-auto py-1 pl-1 pr-2 text-gray-600">
               {t("allergen")}
             </TableHead>
@@ -276,7 +294,7 @@ export function AllergyList({
               variant="ghost"
               size="xs"
               onClick={() => setShowEnteredInError(true)}
-              className="text-xs underline text-gray-500"
+              className="text-xs underline text-gray-950"
             >
               {t("view_all")}
             </Button>

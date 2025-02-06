@@ -9,12 +9,6 @@ import {
 } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
-import {
-  BeakerIcon,
-  CookingPotIcon,
-  HeartPulseIcon,
-  LeafIcon,
-} from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -43,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { CATEGORY_ICONS } from "@/components/Patient/allergy/list";
 import ValueSetSelect from "@/components/Questionnaire/ValueSetSelect";
 
 import query from "@/Utils/request/query";
@@ -88,13 +83,6 @@ const ALLERGY_CATEGORIES: Record<AllergyCategory, string> = {
   medication: "Medication",
   environment: "Environment",
   biologic: "Biologic",
-};
-
-const CATEGORY_ICONS: Record<AllergyCategory, React.ReactNode> = {
-  food: <CookingPotIcon className="h-4 w-4" />,
-  medication: <BeakerIcon className="h-4 w-4" />,
-  environment: <LeafIcon className="h-4 w-4" />,
-  biologic: <HeartPulseIcon className="h-4 w-4" />,
 };
 
 function convertToAllergyRequest(
