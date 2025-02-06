@@ -32,6 +32,7 @@ import {
 import { Avatar } from "@/components/Common/Avatar";
 
 import query from "@/Utils/request/query";
+import { formatName } from "@/Utils/utils";
 import {
   ALLERGY_CLINICAL_STATUS_STYLES,
   ALLERGY_CRITICALITY_STYLES,
@@ -142,7 +143,11 @@ export function AllergyList({
     }, [allergy.note, isLongNote, displayNote, note.length]);
 
     return (
-      <TableRow className="rounded-md overflow-hidden bg-gray-50">
+      <TableRow
+        className={`rounded-md overflow-hidden bg-gray-50 ${
+          allergy.verification_status === "entered_in_error" ? "opacity-50" : ""
+        }`}
+      >
         <TableCell className="first:rounded-l-md">
           <div className="flex items-center">
             {CATEGORY_ICONS[allergy.category ?? ""]}
@@ -213,7 +218,7 @@ export function AllergyList({
               className="w-4 h-4"
               imageUrl={allergy.created_by.profile_picture_url}
             />
-            <span className="text-sm">{allergy.created_by.username}</span>
+            <span className="text-sm">{formatName(allergy.created_by)}</span>
           </div>
         </TableCell>
       </TableRow>
@@ -229,9 +234,7 @@ export function AllergyList({
       <Table className="border-separate border-spacing-y-0.5">
         <TableHeader>
           <TableRow className="rounded-md overflow-hidden bg-gray-100">
-            <TableHead className="first:rounded-l-md h-auto py-1 pl-1 pr-0 text-gray-600">
-              Cat.
-            </TableHead>
+            <TableHead className="first:rounded-l-md h-auto py-1 pl-1 pr-0 text-gray-600"></TableHead>
             <TableHead className="h-auto py-1 pl-1 pr-2 text-gray-600">
               {t("allergen")}
             </TableHead>
@@ -281,7 +284,7 @@ export function AllergyList({
               variant="ghost"
               size="xs"
               onClick={() => setShowEnteredInError(true)}
-              className="text-xs underline text-gray-500"
+              className="text-xs underline text-gray-950"
             >
               {t("view_all")}
             </Button>

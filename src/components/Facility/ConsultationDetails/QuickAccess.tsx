@@ -108,23 +108,25 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
             facilityId={encounter.facility.id}
             trigger={
               <div className="flex flex-wrap gap-2 ">
-                {encounter.organizations.map((org) => (
-                  <Badge
-                    key={org.id}
-                    className="bg-indigo-100 text-indigo-800 font-medium cursor-pointer text-sm "
-                    variant="outline"
-                    title={`Organization: ${org.name}${org.description ? ` - ${org.description}` : ""}`}
-                  >
-                    {org.name}
-                  </Badge>
-                ))}
+                {encounter.organizations.length > 0
+                  ? encounter.organizations.map((org) => (
+                      <Badge
+                        key={org.id}
+                        className="bg-indigo-100 text-indigo-800 font-medium cursor-pointer text-sm "
+                        variant="outline"
+                        title={`Organization: ${org.name}${org.description ? ` - ${org.description}` : ""}`}
+                      >
+                        {org.name}
+                      </Badge>
+                    ))
+                  : t("no_organizations_added_yet")}
               </div>
             }
           />
         </div>
       </section>
 
-      {encounter.hospitalization && (
+      {encounter.hospitalization?.admit_source && (
         <>
           <div className="w-full border-t border-dashed border-gray-300" />
 
