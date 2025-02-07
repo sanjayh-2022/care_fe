@@ -29,7 +29,7 @@ import query from "@/Utils/request/query";
 import { formatDateTime } from "@/Utils/utils";
 import {
   MEDICATION_STATEMENT_STATUS_STYLES,
-  MedicationStatement,
+  MedicationStatementRead,
 } from "@/types/emr/medicationStatement";
 
 interface MedicationStatementListProps {
@@ -39,7 +39,7 @@ interface MedicationStatementListProps {
 }
 
 interface MedicationRowProps {
-  statement: MedicationStatement;
+  statement: MedicationStatementRead;
   isEnteredInError?: boolean;
   isPrintPreview?: boolean;
 }
@@ -115,7 +115,7 @@ function MedicationRow({
           <Avatar
             name={statement.created_by.username}
             className="w-4 h-4"
-            imageUrl={statement.created_by.profile_picture_url}
+            imageUrl={statement.created_by.read_profile_picture_url}
           />
           <span className="text-sm">{statement.created_by.username}</span>
         </div>

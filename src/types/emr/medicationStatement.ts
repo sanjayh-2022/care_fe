@@ -49,11 +49,6 @@ export type MedicationStatement = {
   information_source: MedicationStatementInformationSourceType;
 
   note?: string;
-
-  created_by: {
-    username: string;
-    profile_picture_url?: string;
-  };
 };
 
 export type MedicationStatementRequest = {
