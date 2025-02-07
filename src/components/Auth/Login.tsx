@@ -1,7 +1,7 @@
 import careConfig from "@careConfig";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useQueryParams } from "raviger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReCaptcha from "react-google-recaptcha";
 import { useTranslation } from "react-i18next";
 import { isValidPhoneNumber } from "react-phone-number-input";
@@ -31,16 +31,14 @@ import BrowserWarning from "@/components/ErrorPages/BrowserWarning";
 
 import { useAuthContext } from "@/hooks/useAuthUser";
 
+import { LocalStorageKeys } from "@/common/constants";
+
 import FiltersCache from "@/Utils/FiltersCache";
 import ViewCache from "@/Utils/ViewCache";
 import routes from "@/Utils/request/api";
 import mutate from "@/Utils/request/mutate";
+import { HTTPError } from "@/Utils/request/types";
 import { TokenData } from "@/types/auth/otpToken";
-
-interface LoginFormData {
-  username: string;
-  password: string;
-}
 
 interface OtpLoginData {
   phone_number: string;
@@ -96,16 +94,10 @@ const Login = (props: LoginProps) => {
   const [otpError, setOtpError] = useState<string>("");
   const [otpValidationError, setOtpValidationError] = useState<string>("");
 
-  // Staff Login Mutation
-  const staffLoginMutation = useMutation({
-    mutationFn: async (data: LoginFormData) => {
-      FiltersCache.invaldiateAll();
-      return await signIn(data);
-    },
-    onError: (error) => {
-      setCaptcha(error.status == 429);
-    },
-  });
+  // Remember the last login mode
+  useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.loginPreference, loginMode);
+  }, [loginMode]);
 
   // Send OTP Mutation
   const { mutate: sendOtp, isPending: sendOtpPending } = useMutation({
@@ -226,7 +218,14 @@ const Login = (props: LoginProps) => {
     const validated = validateData();
     if (!validated) return;
 
-    staffLoginMutation.mutate(validated);
+    FiltersCache.invalidateAll();
+    try {
+      await signIn(validated);
+    } catch (error) {
+      if (error instanceof HTTPError) {
+        setCaptcha(error.status == 429);
+      }
+    }
   };
 
   const validateForgetData = () => {
@@ -271,19 +270,10 @@ const Login = (props: LoginProps) => {
   const handlePatientLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      if (!isOtpSent) {
-        await sendOtp({ phone_number: phone });
-        setIsOtpSent(true);
-      } else {
-        await verifyOtp({ phone_number: phone, otp });
-      }
-    } catch (error: any) {
-      if (!isOtpSent) {
-        setOtpError(error.message);
-      } else {
-        setOtpValidationError(error.message);
-      }
+    if (!isOtpSent) {
+      sendOtp({ phone_number: phone });
+    } else {
+      verifyOtp({ phone_number: phone, otp });
     }
   };
 

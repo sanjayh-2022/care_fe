@@ -1,5 +1,6 @@
 import { Patient } from "@/types/emr/newPatient";
 import { FacilityOrganization } from "@/types/facilityOrganization/facilityOrganization";
+import { LocationList } from "@/types/location/location";
 import { UserBase } from "@/types/user/user";
 
 export const ENCOUNTER_ADMIT_SOURCE = [
@@ -148,6 +149,7 @@ export interface Encounter {
     qualification?: string;
     user_type?: string;
   };
+  current_location: LocationList;
 }
 
 export interface EncounterEditRequest {
