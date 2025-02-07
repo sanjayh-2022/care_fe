@@ -13,7 +13,7 @@ import { SymptomsList } from "@/components/Patient/symptoms/list";
 
 import api from "@/Utils/request/api";
 import query from "@/Utils/request/query";
-import { formatPatientAge } from "@/Utils/utils";
+import { formatName, formatPatientAge } from "@/Utils/utils";
 import { Encounter } from "@/types/emr/encounter";
 import medicationRequestApi from "@/types/emr/medicationRequest/medicationRequestApi";
 
@@ -97,20 +97,6 @@ export default function TreatmentSummary({
                 value={t(`encounter_class__${encounter.encounter_class}`)}
                 isStrong
               />
-              {encounter.type?.text && (
-                <DetailRow
-                  label={t("encounter_type")}
-                  value={encounter.type.text}
-                  isStrong
-                />
-              )}
-              {encounter.department?.name && (
-                <DetailRow
-                  label={t("department")}
-                  value={encounter.department.name}
-                  isStrong
-                />
-              )}
               <DetailRow
                 label={t("priority")}
                 value={t(`encounter_priority__${encounter.priority}`)}
@@ -127,6 +113,15 @@ export default function TreatmentSummary({
               )}
               {encounter.hospitalization?.re_admission && (
                 <DetailRow label={t("readmission")} value={t("yes")} isStrong />
+              )}
+              {encounter.hospitalization?.diet_preference && (
+                <DetailRow
+                  label={t("diet_preference")}
+                  value={t(
+                    `encounter_diet_preference__${encounter.hospitalization.diet_preference}`,
+                  )}
+                  isStrong
+                />
               )}
             </div>
             <div className="space-y-3">
@@ -151,19 +146,11 @@ export default function TreatmentSummary({
                 isStrong
               />
 
-              {encounter.consulting_doctor && (
-                <DetailRow
-                  label={t("consulting_doctor")}
-                  value={`${encounter.consulting_doctor.first_name} ${
-                    encounter.consulting_doctor.last_name
-                  }${
-                    encounter.consulting_doctor.qualification
-                      ? ` (${encounter.consulting_doctor.qualification})`
-                      : ""
-                  }`}
-                  isStrong
-                />
-              )}
+              <DetailRow
+                label={t("consulting_doctor")}
+                value={formatName(encounter.created_by)}
+                isStrong
+              />
               {encounter.external_identifier && (
                 <DetailRow
                   label={t("external_id")}
@@ -176,15 +163,6 @@ export default function TreatmentSummary({
                   label={t("discharge_disposition")}
                   value={t(
                     `encounter_discharge_disposition__${encounter.hospitalization.discharge_disposition}`,
-                  )}
-                  isStrong
-                />
-              )}
-              {encounter.hospitalization?.diet_preference && (
-                <DetailRow
-                  label={t("diet_preference")}
-                  value={t(
-                    `encounter_diet_preference__${encounter.hospitalization.diet_preference}`,
                   )}
                   isStrong
                 />

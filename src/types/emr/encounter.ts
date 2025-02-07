@@ -137,18 +137,6 @@ export interface Encounter {
   encounter_class_history: EncounterClassHistory;
   status_history: StatusHistory;
   organizations: FacilityOrganization[];
-  type?: {
-    text: string;
-  };
-  department?: {
-    name: string;
-  };
-  consulting_doctor?: {
-    first_name: string;
-    last_name: string;
-    qualification?: string;
-    user_type?: string;
-  };
   current_location: LocationList;
 }
 
