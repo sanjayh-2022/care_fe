@@ -26,7 +26,7 @@ import { Avatar } from "@/components/Common/Avatar";
 
 import routes from "@/Utils/request/api";
 import query from "@/Utils/request/query";
-import { formatDateTime } from "@/Utils/utils";
+import { formatDateTime, formatName } from "@/Utils/utils";
 import {
   MEDICATION_STATEMENT_STATUS_STYLES,
   MedicationStatementRead,
@@ -113,11 +113,11 @@ function MedicationRow({
       <TableCell className="last:rounded-r-md">
         <div className="flex items-center gap-2">
           <Avatar
-            name={statement.created_by.username}
+            name={formatName(statement.created_by)}
             className="w-4 h-4"
             imageUrl={statement.created_by.read_profile_picture_url}
           />
-          <span className="text-sm">{statement.created_by.username}</span>
+          <span className="text-sm">{formatName(statement.created_by)}</span>
         </div>
       </TableCell>
     </TableRow>
