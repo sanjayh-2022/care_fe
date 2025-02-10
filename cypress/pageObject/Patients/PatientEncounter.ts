@@ -27,6 +27,28 @@ export class PatientEncounter {
     return this;
   }
 
+  openSettingsTab() {
+    cy.get('[data-sidebar="content"]').contains("Settings").click();
+    return this;
+  }
+
+ openNotesTab() {
+    cy.get('#encounter_tab_nav').contains("Notes").click();
+    return this;
+  }
+
+  addMessageToThread(message: string) {
+    cy.get('textarea[placeholder="Type your message"]').type(message);
+    // Click the submit button
+    cy.get('button[type="submit"]').click();
+  }
+
+  startNewConversation() {
+    cy.contains("button", "Start New Discussion").should("be.visible").click();
+    return this;
+  }
+
+
   // Questionnaire actions
   addQuestionnaire(questionnaireName: string) {
     cy.get('[data-cy="add-questionnaire-button"]').click();
