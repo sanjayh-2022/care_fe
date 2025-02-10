@@ -159,9 +159,9 @@ const paginatedQuery = <
       const res = await query(route, {
         ...options,
         queryParams: {
-          ...options?.queryParams,
           limit: pageSize,
           offset: page * pageSize,
+          ...options?.queryParams,
         },
       })({ signal });
 
