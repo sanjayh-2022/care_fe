@@ -71,90 +71,117 @@ export default function TreatmentSummary({
           {/* Patient Details */}
           <div className="grid grid-cols-2 gap-x-12 gap-y-6">
             <div className="space-y-3">
-              <DetailRow
-                label={t("patient")}
-                value={encounter.patient.name}
-                isStrong
-              />
-              <DetailRow
-                label={`${t("age")} / ${t("sex")}`}
-                value={`${formatPatientAge(encounter.patient, true)}, ${t(`GENDER__${encounter.patient.gender}`)}`}
-                isStrong
-              />
-              <DetailRow
-                label={t("encounter_class")}
-                value={t(`encounter_class__${encounter.encounter_class}`)}
-                isStrong
-              />
-              <DetailRow
-                label={t("priority")}
-                value={t(`encounter_priority__${encounter.priority}`)}
-                isStrong
-              />
+              <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                <span className="text-gray-600">{t("patient")}</span>
+                <span className="text-gray-600">:</span>
+                <span className="font-semibold">{encounter.patient.name}</span>
+              </div>
+              <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                <span className="text-gray-600">{`${t("age")} / ${t("sex")}`}</span>
+                <span className="text-gray-600">:</span>
+                <span className="font-semibold">
+                  {`${formatPatientAge(encounter.patient, true)}, ${t(`GENDER__${encounter.patient.gender}`)}`}
+                </span>
+              </div>
+              <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                <span className="text-gray-600">{t("encounter_class")}</span>
+                <span className="text-gray-600">:</span>
+                <span className="font-semibold">
+                  {t(`encounter_class__${encounter.encounter_class}`)}
+                </span>
+              </div>
+              <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                <span className="text-gray-600">{t("priority")}</span>
+                <span className="text-gray-600">:</span>
+                <span className="font-semibold">
+                  {t(`encounter_priority__${encounter.priority}`)}
+                </span>
+              </div>
               {encounter.hospitalization?.admit_source && (
-                <DetailRow
-                  label={t("admission_source")}
-                  value={t(
-                    `encounter_admit_sources__${encounter.hospitalization.admit_source}`,
-                  )}
-                  isStrong
-                />
+                <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                  <span className="text-gray-600">{t("admission_source")}</span>
+                  <span className="text-gray-600">:</span>
+                  <span className="font-semibold">
+                    {t(
+                      `encounter_admit_sources__${encounter.hospitalization.admit_source}`,
+                    )}
+                  </span>
+                </div>
               )}
               {encounter.hospitalization?.re_admission && (
-                <DetailRow label={t("readmission")} value={t("yes")} isStrong />
+                <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                  <span className="text-gray-600">{t("readmission")}</span>
+                  <span className="text-gray-600">:</span>
+                  <span className="font-semibold">{t("yes")}</span>
+                </div>
               )}
               {encounter.hospitalization?.diet_preference && (
-                <DetailRow
-                  label={t("diet_preference")}
-                  value={t(
-                    `encounter_diet_preference__${encounter.hospitalization.diet_preference}`,
-                  )}
-                  isStrong
-                />
+                <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                  <span className="text-gray-600">{t("diet_preference")}</span>
+                  <span className="text-gray-600">:</span>
+                  <span className="font-semibold">
+                    {t(
+                      `encounter_diet_preference__${encounter.hospitalization.diet_preference}`,
+                    )}
+                  </span>
+                </div>
               )}
             </div>
             <div className="space-y-3">
-              <DetailRow
-                label={t("mobile_number")}
-                value={encounter.patient.phone_number}
-                isStrong
-              />
+              <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                <span className="text-gray-600">{t("mobile_number")}</span>
+                <span className="text-gray-600">:</span>
+                <span className="font-semibold">
+                  {encounter.patient.phone_number}
+                </span>
+              </div>
               {encounter.period?.start && (
-                <DetailRow
-                  label={t("encounter_date")}
-                  value={format(
-                    new Date(encounter.period.start),
-                    "dd MMM yyyy, EEEE",
-                  )}
-                  isStrong
-                />
+                <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                  <span className="text-gray-600">{t("encounter_date")}</span>
+                  <span className="text-gray-600">:</span>
+                  <span className="font-semibold">
+                    {format(
+                      new Date(encounter.period.start),
+                      "dd MMM yyyy, EEEE",
+                    )}
+                  </span>
+                </div>
               )}
-              <DetailRow
-                label={t("status")}
-                value={t(`encounter_status__${encounter.status}`)}
-                isStrong
-              />
-
-              <DetailRow
-                label={t("consulting_doctor")}
-                value={formatName(encounter.created_by)}
-                isStrong
-              />
+              <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                <span className="text-gray-600">{t("status")}</span>
+                <span className="text-gray-600">:</span>
+                <span className="font-semibold">
+                  {t(`encounter_status__${encounter.status}`)}
+                </span>
+              </div>
+              <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                <span className="text-gray-600">{t("consulting_doctor")}</span>
+                <span className="text-gray-600">:</span>
+                <span className="font-semibold">
+                  {formatName(encounter.created_by)}
+                </span>
+              </div>
               {encounter.external_identifier && (
-                <DetailRow
-                  label={t("external_id")}
-                  value={encounter.external_identifier}
-                  isStrong
-                />
+                <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                  <span className="text-gray-600">{t("external_id")}</span>
+                  <span className="text-gray-600">:</span>
+                  <span className="font-semibold">
+                    {encounter.external_identifier}
+                  </span>
+                </div>
               )}
               {encounter.hospitalization?.discharge_disposition && (
-                <DetailRow
-                  label={t("discharge_disposition")}
-                  value={t(
-                    `encounter_discharge_disposition__${encounter.hospitalization.discharge_disposition}`,
-                  )}
-                  isStrong
-                />
+                <div className="grid grid-cols-[8rem,0.25rem,1fr] items-center">
+                  <span className="text-gray-600">
+                    {t("discharge_disposition")}
+                  </span>
+                  <span className="text-gray-600">:</span>
+                  <span className="font-semibold">
+                    {t(
+                      `encounter_discharge_disposition__${encounter.hospitalization.discharge_disposition}`,
+                    )}
+                  </span>
+                </div>
               )}
             </div>
           </div>
@@ -225,23 +252,3 @@ export default function TreatmentSummary({
     </PrintPreview>
   );
 }
-
-const DetailRow = ({
-  label,
-  value,
-  isStrong = false,
-}: {
-  label: string;
-  value?: string | null;
-  isStrong?: boolean;
-}) => {
-  return (
-    <div className="flex">
-      <span className="text-gray-600 w-32">{label}</span>
-      <span className="text-gray-600">: </span>
-      <span className={`ml-1 ${isStrong ? "font-semibold" : ""}`}>
-        {value || "-"}
-      </span>
-    </div>
-  );
-};
