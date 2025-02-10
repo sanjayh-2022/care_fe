@@ -1,7 +1,12 @@
 import careConfig from "@careConfig";
 
 import { getResponseBody } from "@/Utils/request/request";
-import { ApiCallOptions, ApiRoute, HTTPError } from "@/Utils/request/types";
+import {
+  ApiCallOptions,
+  ApiRoute,
+  HTTPError,
+  PaginatedResponse,
+} from "@/Utils/request/types";
 import { makeHeaders, makeUrl } from "@/Utils/request/utils";
 import { sleep } from "@/Utils/utils";
 
@@ -113,3 +118,57 @@ const debouncedQuery = <Route extends ApiRoute<unknown, unknown>>(
   };
 };
 query.debounced = debouncedQuery;
+
+/**
+ * Creates a TanStack Query compatible paginated query function.
+ *
+ * This function is useful for fetching paginated data from an API.
+ * It will fetch all pages of data and return a single array of results.
+ *
+ * To disable pagination, set the `maxPages` option to `1`.
+ * Leaving it unset will fetch all pages.
+ *
+ * Example:
+ * ```tsx
+ * const { data, isLoading } = useQuery({
+ *   queryKey: ["patient-search", facilityId, search],
+ *   queryFn: query.paginated(patientsApi.search, {
+ *     pathParams: { facilityId },
+ *     queryParams: { limit: 10, offset: 0, search },
+ *   }),
+ * });
+ * ```
+ */
+const paginatedQuery = <
+  Route extends ApiRoute<PaginatedResponse<unknown>, unknown>,
+>(
+  route: Route,
+  options?: ApiCallOptions<Route> & { maxPages?: number },
+) => {
+  return async ({ signal }: { signal: AbortSignal }) => {
+    const items: Route["TRes"]["results"] = [];
+    let hasNextPage = true;
+    let page = 0;
+
+    while (hasNextPage) {
+      const res = await query(route, { ...options })({ signal });
+      items.push(...res.results);
+
+      if (options?.maxPages && page >= options.maxPages) {
+        hasNextPage = false;
+      }
+
+      if (items.length >= res.count) {
+        hasNextPage = false;
+      }
+
+      page++;
+    }
+
+    return {
+      count: items.length,
+      results: items,
+    };
+  };
+};
+query.paginated = paginatedQuery;
