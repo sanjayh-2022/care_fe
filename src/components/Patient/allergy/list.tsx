@@ -131,22 +131,11 @@ export function AllergyList({
   }
 
   function AllergyRow({ allergy }: AllergyRowProps) {
-    const MAX_NOTE_LENGTH = 15;
     const note = allergy.note || "";
-    const isLongNote = note.length > MAX_NOTE_LENGTH;
-    const displayNote = isLongNote
-      ? `${note.slice(0, MAX_NOTE_LENGTH)}..`
-      : note;
 
     useEffect(() => {
-      console.log(
-        "Allergy Note:",
-        allergy.note,
-        isLongNote,
-        displayNote,
-        note.length,
-      );
-    }, [allergy.note, isLongNote, displayNote, note.length]);
+      console.log("Allergy Note:", allergy.note, note.length);
+    }, [allergy.note, note.length]);
 
     return (
       <TableRow
@@ -195,10 +184,9 @@ export function AllergyList({
         <TableCell className="text-sm text-gray-950">
           {note && (
             <div className="flex items-center gap-2">
-              <span className="text-gray-950 max-w-[200px]">
-                {!isPrintPreview ? displayNote : note}
-              </span>
-              {!isPrintPreview && isLongNote && (
+              {isPrintPreview ? (
+                <span className="text-gray-950 max-w-[200px]">{note}</span>
+              ) : (
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button

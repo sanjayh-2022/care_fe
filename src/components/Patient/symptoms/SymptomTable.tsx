@@ -61,11 +61,6 @@ export function SymptomTable({
       <TableBody>
         {symptoms.map((symptom) => {
           const note = symptom.note || "";
-          const MAX_NOTE_LENGTH = 15;
-          const isLongNote = note.length > MAX_NOTE_LENGTH;
-          const displayNote = isLongNote
-            ? `${note.slice(0, MAX_NOTE_LENGTH)}..`
-            : note;
 
           return (
             <TableRow
@@ -114,10 +109,9 @@ export function SymptomTable({
               <TableCell className="max-w-[200px]">
                 {note ? (
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-950">
-                      {!isPrintPreview ? displayNote : note}
-                    </span>
-                    {!isPrintPreview && isLongNote && (
+                    {isPrintPreview ? (
+                      <span className="text-gray-950">{note}</span>
+                    ) : (
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
