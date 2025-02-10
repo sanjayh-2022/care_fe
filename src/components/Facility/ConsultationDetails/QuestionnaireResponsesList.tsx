@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useQueryParams } from "raviger";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
@@ -282,19 +281,17 @@ export default function QuestionnaireResponsesList({
     queryFn: query.paginated(routes.getQuestionnaireResponses, {
       pathParams: { patientId },
       queryParams: {
+        ...(!isPrintPreview && {
+          limit: RESULTS_PER_PAGE_LIMIT,
+          offset: ((qParams.page ?? 1) - 1) * RESULTS_PER_PAGE_LIMIT,
+        }),
         encounter: encounter?.id,
         only_unstructured: onlyUnstructured,
       },
       maxPages: isPrintPreview ? undefined : 1,
+      pageSize: isPrintPreview ? 100 : RESULTS_PER_PAGE_LIMIT,
     }),
   });
-  useEffect(() => {
-    console.log(
-      "isPrintPreview",
-      isPrintPreview,
-      questionnarieResponses?.count,
-    );
-  }, [isPrintPreview, questionnarieResponses?.count]);
 
   return (
     <div className="mt-4 gap-4">

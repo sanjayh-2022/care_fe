@@ -45,8 +45,8 @@ export default function QuickAccess({ encounter }: QuickAccessProps) {
 
       {/* Departments and Teams */}
       <section>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-medium text-gray-950">
+        <div className="items-center justify-between mb-3">
+          <h3 className="text-lg font-medium text-gray-950 mb-1">
             {t("departments_and_teams")}
           </h3>
           <LinkDepartmentsSheet
