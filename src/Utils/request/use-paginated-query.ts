@@ -12,7 +12,7 @@ import {
 
 export default function usePaginatedQuery<
   Route extends ApiRoute<unknown, unknown>,
->(route: Route, options?: ApiCallOptions<Route>) {
+>(route: Route, options?: ApiCallOptions<Route> & { enabled?: boolean }) {
   const { data, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ["paginated", route.path, options?.queryParams],
     queryFn: async ({ pageParam = 0, signal }) => {
@@ -26,6 +26,7 @@ export default function usePaginatedQuery<
       })({ signal });
       return response as PaginatedResponse<Route["TRes"]>;
     },
+    enabled: options?.enabled,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       const currentOffset = allPages.length * RESULTS_PER_PAGE_LIMIT;
@@ -34,10 +35,10 @@ export default function usePaginatedQuery<
   });
 
   useEffect(() => {
-    if (hasNextPage && fetchNextPage) {
+    if (hasNextPage && fetchNextPage && options?.enabled) {
       fetchNextPage();
     }
-  }, [hasNextPage, fetchNextPage, data]);
+  }, [hasNextPage, fetchNextPage, data, options?.enabled]);
 
   return {
     data: data?.pages.flatMap((page) => page.results),
