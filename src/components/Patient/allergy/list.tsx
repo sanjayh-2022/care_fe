@@ -7,7 +7,7 @@ import {
   LeafIcon,
 } from "lucide-react";
 import { Link } from "raviger";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -131,12 +131,6 @@ export function AllergyList({
   }
 
   function AllergyRow({ allergy }: AllergyRowProps) {
-    const note = allergy.note || "";
-
-    useEffect(() => {
-      console.log("Allergy Note:", allergy.note, note.length);
-    }, [allergy.note, note.length]);
-
     return (
       <TableRow
         className={`rounded-md overflow-hidden bg-gray-50 ${
@@ -182,10 +176,12 @@ export function AllergyList({
           </Badge>
         </TableCell>
         <TableCell className="text-sm text-gray-950">
-          {note && (
+          {allergy.note && (
             <div className="flex items-center gap-2">
               {isPrintPreview ? (
-                <span className="text-gray-950 max-w-[200px]">{note}</span>
+                <span className="text-gray-950 max-w-[200px]">
+                  {allergy.note}
+                </span>
               ) : (
                 <Popover>
                   <PopoverTrigger asChild>
@@ -199,7 +195,7 @@ export function AllergyList({
                   </PopoverTrigger>
                   <PopoverContent className="w-80 p-4">
                     <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                      {note}
+                      {allergy.note}
                     </p>
                   </PopoverContent>
                 </Popover>

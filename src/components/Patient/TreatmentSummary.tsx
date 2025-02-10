@@ -15,7 +15,6 @@ import api from "@/Utils/request/api";
 import query from "@/Utils/request/query";
 import { formatName, formatPatientAge } from "@/Utils/utils";
 import { Encounter } from "@/types/emr/encounter";
-import medicationRequestApi from "@/types/emr/medicationRequest/medicationRequestApi";
 
 import { MedicationStatementList } from "./MedicationStatementList";
 
@@ -36,16 +35,7 @@ export default function TreatmentSummary({
     }),
   });
 
-  const { data: medications } = useQuery({
-    queryKey: ["medication_requests", encounter?.patient?.id],
-    queryFn: query(medicationRequestApi.list, {
-      pathParams: { patientId: encounter?.patient?.id || "" },
-      queryParams: { encounter: encounterId, limit: 50, offset: 0 },
-    }),
-    enabled: !!encounter?.patient?.id,
-  });
-
-  if (!encounter?.patient) {
+  if (!encounter) {
     return (
       <div className="flex h-[200px] items-center justify-center rounded-lg border-2 border-dashed p-4 text-gray-500">
         {t("no_patient_record_found")}
@@ -56,7 +46,6 @@ export default function TreatmentSummary({
   return (
     <PrintPreview
       title={`${t("treatment_summary")} - ${encounter.patient.name}`}
-      disabled={!encounter?.patient}
     >
       <div className="min-h-screen bg-white py-2 max-w-4xl mx-auto">
         <div className="space-y-6">
@@ -201,7 +190,10 @@ export default function TreatmentSummary({
               <p className="text-sm font-semibold text-gray-950">
                 {t("medications")}
               </p>
-              <MedicationsTable medications={medications?.results || []} />
+              <MedicationsTable
+                patientId={encounter.patient.id}
+                encounterId={encounterId}
+              />
             </div>
           </div>
 

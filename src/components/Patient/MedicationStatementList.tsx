@@ -50,7 +50,6 @@ function MedicationRow({
   isPrintPreview = false,
 }: MedicationRowProps) {
   const { t } = useTranslation();
-  const note = statement.note || "";
 
   return (
     <TableRow
@@ -72,17 +71,17 @@ function MedicationRow({
           {statement.status}
         </Badge>
       </TableCell>
-      <TableCell className="whitespace-nowrap">
+      <TableCell>
         {[statement.effective_period?.start, statement.effective_period?.end]
           .map((date) => formatDateTime(date))
           .join(" - ")}
       </TableCell>
       <TableCell>{statement.reason}</TableCell>
       <TableCell className="max-w-[200px]">
-        {note ? (
+        {statement.note ? (
           <div className="flex items-center gap-2">
             {isPrintPreview ? (
-              <span className="text-gray-950">{note}</span>
+              <span className="text-gray-950">{statement.note}</span>
             ) : (
               <Popover>
                 <PopoverTrigger asChild>
@@ -96,7 +95,7 @@ function MedicationRow({
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-4">
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {note}
+                    {statement.note}
                   </p>
                 </PopoverContent>
               </Popover>
