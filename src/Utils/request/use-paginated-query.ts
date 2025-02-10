@@ -35,7 +35,7 @@ export default function usePaginatedQuery<
   });
 
   useEffect(() => {
-    if (hasNextPage && fetchNextPage) {
+    if (hasNextPage && fetchNextPage && options?.enabled) {
       fetchNextPage();
     }
   }, [hasNextPage, fetchNextPage, data, options?.enabled]);
