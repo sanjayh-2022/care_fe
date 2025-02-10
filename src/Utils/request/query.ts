@@ -151,6 +151,7 @@ const paginatedQuery = <
     const items: Route["TRes"]["results"] = [];
     let hasNextPage = true;
     let page = 0;
+    let count = 0;
 
     const pageSize = options?.pageSize ?? RESULTS_PER_PAGE_LIMIT;
 
@@ -158,15 +159,16 @@ const paginatedQuery = <
       const res = await query(route, {
         ...options,
         queryParams: {
-          ...options?.queryParams,
           limit: pageSize,
           offset: page * pageSize,
+          ...options?.queryParams,
         },
       })({ signal });
 
+      count = res.count;
       items.push(...res.results);
 
-      if (options?.maxPages && page >= options.maxPages) {
+      if (options?.maxPages && page >= options.maxPages - 1) {
         hasNextPage = false;
       }
 
@@ -178,7 +180,7 @@ const paginatedQuery = <
     }
 
     return {
-      count: items.length,
+      count,
       results: items,
     };
   };
