@@ -1,5 +1,7 @@
 import careConfig from "@careConfig";
 
+import { RESULTS_PER_PAGE_LIMIT } from "@/common/constants";
+
 import { getResponseBody } from "@/Utils/request/request";
 import {
   ApiCallOptions,
@@ -143,15 +145,25 @@ const paginatedQuery = <
   Route extends ApiRoute<PaginatedResponse<unknown>, unknown>,
 >(
   route: Route,
-  options?: ApiCallOptions<Route> & { maxPages?: number },
+  options?: ApiCallOptions<Route> & { pageSize?: number; maxPages?: number },
 ) => {
   return async ({ signal }: { signal: AbortSignal }) => {
     const items: Route["TRes"]["results"] = [];
     let hasNextPage = true;
     let page = 0;
 
+    const pageSize = options?.pageSize ?? RESULTS_PER_PAGE_LIMIT;
+
     while (hasNextPage) {
-      const res = await query(route, { ...options })({ signal });
+      const res = await query(route, {
+        ...options,
+        queryParams: {
+          ...options?.queryParams,
+          limit: pageSize,
+          offset: page * pageSize,
+        },
+      })({ signal });
+
       items.push(...res.results);
 
       if (options?.maxPages && page >= options.maxPages) {
