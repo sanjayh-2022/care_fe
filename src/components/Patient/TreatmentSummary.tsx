@@ -14,7 +14,6 @@ import { SymptomsList } from "@/components/Patient/symptoms/list";
 import api from "@/Utils/request/api";
 import query from "@/Utils/request/query";
 import { formatName, formatPatientAge } from "@/Utils/utils";
-import { Encounter } from "@/types/emr/encounter";
 
 import { MedicationStatementList } from "./MedicationStatementList";
 
