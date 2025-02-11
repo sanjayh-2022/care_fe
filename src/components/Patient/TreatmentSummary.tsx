@@ -27,7 +27,7 @@ export default function TreatmentSummary({
   facilityId,
   encounterId,
 }: TreatmentSummaryProps) {
-  const { data: encounter } = useQuery<Encounter>({
+  const { data: encounter } = useQuery({
     queryKey: ["encounter", encounterId],
     queryFn: query(api.encounter.get, {
       pathParams: { id: encounterId },
