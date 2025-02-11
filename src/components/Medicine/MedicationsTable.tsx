@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -55,7 +56,7 @@ export const MedicationsTable = ({
   if (isLoading) {
     return (
       <div className="flex h-[200px] items-center justify-center rounded-lg border-2 border-dashed p-4 text-gray-500">
-        {t("no_medications_found_for_this_encounter")}
+        <Skeleton className="h-[100px] w-full" />
       </div>
     );
   }
