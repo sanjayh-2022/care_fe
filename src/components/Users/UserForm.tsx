@@ -90,7 +90,7 @@ export default function UserForm({
       first_name: z.string().min(1, t("field_required")),
       last_name: z.string().min(1, t("field_required")),
       email: z.string().email(t("invalid_email_address")),
-      phone_number: validators.phoneNumber.required,
+      phone_number: validators().phoneNumber.required,
       gender: z.enum(GENDERS, { required_error: t("gender_is_required") }),
       /* TODO: Userbase doesn't currently support these, neither does BE
       but we will probably need these */
@@ -155,7 +155,7 @@ export default function UserForm({
   const [isUsernameFieldFocused, setIsUsernameFieldFocused] = useState(false);
 
   //const userType = form.watch("user_type");
-  const usernameInput = form.watch("username");
+  const usernameInput = form.watch("username") || "";
   const phoneNumber = form.watch("phone_number");
 
   useEffect(() => {
